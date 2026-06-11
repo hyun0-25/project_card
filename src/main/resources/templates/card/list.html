@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <title>소지 카드 내역조회</title>
+    <style>
+        .list{
+            background-color: rgb(231, 253, 217);
+            padding: 10px;
+        }
+        .modal{
+            width: 1000px;
+            height: 800px;
+            margin: 20px auto;
+            padding: 10px;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .container{
+            display : flex;
+            justify-content: space-between;
+            padding: 15px;
+        }
+        select{
+            width:170px;
+        }
+        button{
+            margin-left: 5px;
+            width: 70px;
+        }
+        input{
+            width: 180px
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #bebebe;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: rgb(203, 245, 163);
+        }
+        label{
+            margin-right:10px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<div th:replace="~{fragments/navbar :: globalNavbar}"></div>
+<body>
+    <h2>소지 카드 내역조회</h2>
+    <div class="modal">
+        <!-- <form th:action="@{/board/list}" method="get"> -->
+        <form id="listForm">
+            <div class="list">
+                <div class="container">
+                    <div class="form-group">
+                        <label>주민번호</label>
+                        <input type="hidden" id="ssn" name="ssn">
+                        <input type="text" id="ssn1" name="ssn1" style="width: 120px;" maxlength="6"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                        >
+                        -
+                        <input type="text" id="ssn2" name="ssn2" style="width: 120px;" maxlength="7"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                        >
+                    </div>
+                    <div class="form-group">
+                        <label>카드번호</label>
+                        <input type="text" id="crdNo" name="crdNo" style="width: 250px;" maxlength="16"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                        >
+                    </div>
+                    <div>
+                        <button type="button" onclick="checkSsn()">조회</button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </form>
+        <div style="padding: 0 10px;">조회</div>
+        <div style="height: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 15px;">
+            <div class="container">
+                <div class="form-group">
+                    <label>성명(한글)</label>
+                    <input type="text" id="hgNm" name="hgNm" disabled>
+                </div>
+                <div class="form-group">
+                    <label>핸드폰번호</label>
+                    <input type="text" id="engNm" name="engNm" disabled>
+                </div>
+                <div class="form-group">
+                    <label>등록일자</label>
+                    <input type="text" id="regD" name="regD" disabled>
+                </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>결제방법</label>
+                    <input type="text" id="stlMtd" name="stlMtd" disabled>
+                </div>
+                <div class="form-group">
+                    <label>결제은행</label>
+                    <input type="text" id="bnkCd" name="bnkCd" disabled>
+                </div>
+                <div class="form-group">
+                    <label>결제계좌</label>
+                    <input type="text" id="stlAct" name="stlAct" disabled>
+                </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>결제일자</label>
+                    <input type="text" id="stlDd" name="stlDd" disabled>
+                </div>
+                <div class="form-group">
+                    <label>청구서 발송방법</label>
+                    <input type="text" id="stmtSndMtd" name="stmtSndMtd" disabled>
+                </div>
+                <div class="form-group">
+                    <label>E-MAIL</label>
+                    <input type="text" id="emailAdr" name="emailAdr" disabled>
+                </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>우편번호</label>
+                    <input type="text" id="billZip" name="billZip" style="width: 150px" disabled>
+                    <input type="text" id="billAdr1" name="billAdr1" disabled>
+                    <input type="text" id="billAdr2" name="billAdr2" style="width: 450px" disabled>
+                </div>
+            </div>
+        </div>
+        <div style="height:350px; overflow-x: auto; overflow-y: auto; border: 1px solid #ccc; padding: 10px">
+            <table>
+                <thead>
+                    <tr>
+                        <th>카드번호</th>
+                        <th>성명(영문)</th>
+                        <th>유효기간</th>
+                        <th>브랜드</th>
+                        <th>카드등급</th>
+                        <th>발행일자</th>
+                        <th>전 카드번호</th>
+                        <th>최종 카드 여부</th>
+                        <th>관리영업점</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <div style="margin-left: auto;">
+                <button type="button" onclick="resetForm()">초기화</button>
+                <button>닫기</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function resetForm() {
+        document.getElementById('listForm').reset();
+    }
+</script>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <title>회원 색인 조회</title>
+    <style>
+        .list{
+            background-color: rgb(229, 243, 255);
+            padding: 10px;
+        }
+        .modal{
+            width: 1000px;
+            height: 600px;
+            margin: 30px auto;
+            padding: 10px;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .container{
+            display : flex;
+            justify-content: space-between;
+            padding: 15px;
+        }
+        select{
+            width:170px;
+        }
+        button{
+            margin-left: 5px;
+            width: 70px;
+        }
+        input{
+            width: 160px
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #bebebe;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: #b1d9ff;
+        }
+        label{
+            margin-right:10px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<div th:replace="~{fragments/navbar :: globalNavbar}"></div>
+<body>
+    <h2>회원 색인 조회</h2>
+    <div class="modal">
+            <!-- <form th:action="@{/board/list}" method="get"> -->
+        <form id="listForm">
+            <div class="list">
+                <div class="container">
+                    <div class="form-group">
+                        <label>성명</label>
+                        <input type="text" id="hgNm" name="hgNm">
+                    </div>
+                    <div class="form-group">
+                        <label>생년월일</label>
+                        <input type="date" id="birthD" name="birthD">
+                    </div>
+                    <div class="form-group">
+                        <label>핸드폰 번호</label>
+                        <input type="text" id="hdpNo" name="hdpNo" maxlength="13"
+                            oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+                        >
+                    </div>
+                    <div>
+                        <button type="button" onclick="checkSsn()">조회</button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </form>
+        <div style="margin: 5px 10px;">조회결과</div>
+        <div style="height:400px; overflow-x: auto; overflow-y: auto; border: 1px solid #ccc; padding: 10px">
+            <table>
+                <thead>
+                    <tr>
+                        <th>주민번호</th>
+                        <th>성명(한글)</th>
+                        <th>생년월일</th>
+                        <th>핸드폰번호</th>
+                        <th>결제 은행</th>
+                        <th>결제 계좌</th>
+                        <th>주소</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <div style="margin-left: auto;">
+                <button type="button" onclick="resetForm()">초기화</button>
+                <button>닫기</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function resetForm() {
+        document.getElementById('listForm').reset();
+    }
+</script>
+</html>

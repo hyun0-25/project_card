@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+    <title>기간별 입회신청 내역조회</title>
+    <style>
+        .list{
+            background-color: rgb(253, 253, 217);
+            padding: 10px;
+        }
+        .modal{
+            width: 1200px;
+            height: 800px;
+            margin: 20px auto;
+            padding: 10px;
+            box-shadow: 0 0 3px rgba(0, 0, 0, 0.2);
+            border-radius: 5px;
+        }
+        .container{
+            display : flex;
+            justify-content: space-between;
+            padding: 15px;
+        }
+        select{
+            width:170px;
+        }
+        button{
+            margin-left: 5px;
+            width: 70px;
+        }
+        input{
+            width: 120px
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #bebebe;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        thead {
+            background-color: rgb(245, 212, 163);
+        }
+        label{
+            margin-right:10px;
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+            margin: 30px auto;
+        }
+    </style>
+</head>
+<div th:replace="~{fragments/navbar :: globalNavbar}"></div>
+<body>
+    <h2>기간별 입회신청 내역조회</h2>
+    <div class="modal">
+        <!-- <form th:action="@{/board/list}" method="get"> -->
+        <form id="listForm">
+            <div class="list">
+                <div class="container">
+                    <div class="form-group">
+                        <label>기간</label>
+                        <input type="date" id="applD1" name="applD1">
+                        ~ 
+                        <input type="date" id="applD2" name="applD2">
+                    </div>
+                    <div class="form-group">
+                        <label>신청구분</label>
+                        <select class="apply-class-select" id="applClas" name="applClas">
+                            <option value="">선택</option>
+                            <!-- <option th:each=""></option> -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>주민번호</label>
+                        <input type="hidden" id="ssn" name="ssn">
+                        <input type="text" id="ssn1" name="ssn1" style="width: 100px;" maxlength="6"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                        >
+                        -
+                        <input type="text" id="ssn2" name="ssn2" style="width: 100px;" maxlength="7"
+                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                        >
+                    </div>
+                    <div>
+                        <button type="button" onclick="checkSsn()">조회</button>
+                    </div>
+                </div>
+            </div>
+            <hr>
+        </form>
+        <div style="margin: 5px 10px;">조회결과</div>
+        <div style="height:600px; overflow-x: auto; overflow-y: auto; border: 1px solid #ccc; padding: 10px">
+            <table>
+                <thead>
+                    <tr>
+                        <th>접수일자</th>
+                        <th>접수 일련번호</th>
+                        <th>주민번호</th>
+                        <th>성명(한글)</th>
+                        <th>성명(영문)</th>
+                        <th>신청구분</th>
+                        <th>브랜드</th>
+                        <th>핸드폰번호</th>
+                        <th>불능구분</th>
+                        <th>불능 사유명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="">
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="container">
+            <div style="margin-left: auto;">
+                <button type="button" onclick="resetForm()">초기화</button>
+                <button>닫기</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function resetForm() {
+        document.getElementById('listForm').reset();
+    }
+</script>
+</html>
