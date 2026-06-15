@@ -1,6 +1,6 @@
-package com.example.project_card.users.dto.request;
+package com.example.project_card.applys.dto.request;
 
-import com.example.project_card.users.domain.ReceiveApply;
+import com.example.project_card.applys.domain.ReceiveApply;
 import lombok.Builder;
 
 import java.time.LocalDate;
@@ -20,6 +20,7 @@ public record ReceiveApplyDTO(
         String bnkCd,
         String stlDd,
         String applClas,
+        String prcsClas,
         String stmtSndMtd,
         String billAdr1,
         String billAdr2,
@@ -35,7 +36,7 @@ public record ReceiveApplyDTO(
 ) {
     public static ReceiveApplyDTO EmptyReceiveApplyInfo()
     {
-        return new ReceiveApplyDTO("", "", LocalDate.now(), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+        return new ReceiveApplyDTO("", "", LocalDate.now(), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
     }
 
     public static ReceiveApplyDTO fromReceiveApply(ReceiveApply receiveApply)
@@ -54,6 +55,7 @@ public record ReceiveApplyDTO(
                 .bnkCd(receiveApply.getBnkCd())
                 .stlDd(receiveApply.getStlDd())
                 .applClas(receiveApply.getApplClas())
+                .prcsClas("1")
                 .stmtSndMtd(receiveApply.getStmtSndMtd())
                 .billAdr1(receiveApply.getBillAdr1())
                 .billAdr2(receiveApply.getBillAdr2())

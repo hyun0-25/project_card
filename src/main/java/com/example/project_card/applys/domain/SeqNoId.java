@@ -1,6 +1,5 @@
-package com.example.project_card.users.domain;
+package com.example.project_card.applys.domain;
 
-import jakarta.persistence.Id;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,11 +8,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode
-public class ReceiveApplyId {
+public class SeqNoId {
 
-    private String ssn;
+    private String custNo;
 
-    private String rcvD;
-
-    private String rcvSeqNo;
+    private String crdNo;
 }

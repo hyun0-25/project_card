@@ -1,8 +1,8 @@
-package com.example.project_card.users.controller;
+package com.example.project_card.applys.controller;
 
 import com.example.project_card.comCodes.service.ComCodeService;
-import com.example.project_card.users.dto.request.ReceiveApplyDTO;
-import com.example.project_card.users.service.UserService;
+import com.example.project_card.applys.dto.request.ReceiveApplyDTO;
+import com.example.project_card.applys.service.ApplyService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
@@ -12,16 +12,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.time.LocalDate;
-
 @Slf4j
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/user")
-public class UserController {
+public class ApplyController {
 
     private final ComCodeService comCodeService;
-    private final UserService userService;
+    private final ApplyService applyService;
 
     @GetMapping("/register")
     public String GetReceiveApply(
@@ -46,9 +44,9 @@ public class UserController {
             Model model
     )
     {
-        log.info("{ UserController } : ReceiveApply 생성 진입");
-        model.addAttribute("receiveApplyDTO", userService.ReceiveApply(receiveApplyDTO));
-        log.info("{ UserController } : ReceiveApply 생성 완료");
+        log.info("{ ApplyController } : ReceiveApply 생성 진입");
+        model.addAttribute("receiveApplyDTO", applyService.ReceiveApply(receiveApplyDTO));
+        log.info("{ ApplyController } : ReceiveApply 생성 완료");
         return "apply/register";
     }
 }

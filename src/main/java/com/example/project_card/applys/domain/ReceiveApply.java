@@ -1,6 +1,5 @@
-package com.example.project_card.users.domain;
+package com.example.project_card.applys.domain;
 
-import com.example.project_card.comCodes.domain.ComCodeDtlId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.IdClass;

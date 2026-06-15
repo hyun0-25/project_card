@@ -5,7 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface ComCodeRepository extends JpaRepository<ComCodeDtl, String> {
+public interface ComCodeDtlRepository extends JpaRepository<ComCodeDtl, String> {
 
     List<ComCodeDtl> findByGroupCd(String groupCd);
+
+    ComCodeDtl findByGroupCdAndCode(String groupCd, String code);
+
 }
