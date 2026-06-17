@@ -19,4 +19,14 @@ public class SeqNo {
     @Id
     private String crdNo;
 
+    private SeqNo(String custNo, String crdNo)
+    {
+        this.custNo = custNo;
+        this.crdNo = crdNo;
+    }
+
+    public static SeqNo createSeqNo(String custNo, String crdNo)
+    {
+        return new SeqNo(custNo, crdNo);
+    }
 }

@@ -94,4 +94,9 @@ public class ReceiveApply {
     public static ReceiveApply createReceiveApply(String ssn, String rcvD, String rcvSeqNo, String applD, String birthD, String hgNm, String engNm, String stlMtd, String stlAct, String bnkCd, String stlDd, String mgtBbrn, String applClas, String stmtSndMtd, String billAdr1, String billAdr2, String billZip, String hdpNo, String brd, String scrtNo, String emailAdr, String crdNo, String impsbClas, String impsbCd) {
         return new ReceiveApply(ssn, rcvD, rcvSeqNo, applD, birthD, hgNm, engNm, stlMtd, stlAct, bnkCd, stlDd, mgtBbrn, applClas, stmtSndMtd, billAdr1, billAdr2, billZip, hdpNo, brd, scrtNo, emailAdr, crdNo, impsbClas, impsbCd);
     }
+
+    public void updateReceiveApplyCrdNo(String crdNo)
+    {
+        this.crdNo = crdNo;
+    }
 }

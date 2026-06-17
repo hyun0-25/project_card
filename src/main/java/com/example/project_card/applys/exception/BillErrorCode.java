@@ -7,9 +7,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ApplyErrorCode implements ErrorCode {
-    APPLY_CLAS_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLY_001", "신청 구분 코드가 존재하지 않습니다"),
-    BRD_NOT_FOUND(HttpStatus.NOT_FOUND, "APPLY_002", "브랜드 코드가 존재하지 않습니다")
+public enum BillErrorCode implements ErrorCode {
+    BILL_NOT_FOUND(HttpStatus.NOT_FOUND, "BILL_001", "결제 정보가 존재하지 않습니다")
     ;
 
     private final HttpStatus status;

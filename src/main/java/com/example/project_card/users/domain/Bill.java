@@ -60,4 +60,20 @@ public class Bill {
         return new Bill(stlAct, bnkCd, dpsNm, stlMtd, stlDd, custNo, prcsClas, stmtSndMtd, stmtDeniClas, billZip, billAdr1, billAdr2, emailAdr);
     }
 
+    public void updateBill(String stlAct, String bnkCd, String dpsNm, String stlMtd, String stlDd, String prcsClas, String stmtSndMtd, String stmtDeniClas, String billZip, String billAdr1, String billAdr2, String emailAdr)
+    {
+        this.stlAct = stlAct;
+        this.bnkCd = bnkCd;
+        this.dpsNm = dpsNm;
+        this.stlMtd = stlMtd;
+        this.stlDd = stlDd;
+        this.prcsClas = prcsClas;
+        this.stmtSndMtd = stmtSndMtd;
+        this.stmtDeniClas = stmtDeniClas;
+        this.billZip = billZip;
+        this.billAdr1 = billAdr1;
+        this.billAdr2 = billAdr2;
+        this.emailAdr = emailAdr;
+    }
+
 }

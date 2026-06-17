@@ -52,7 +52,7 @@
 <body>
     <h2>회원 입회신청 작성</h2>
     <div class="modal">
-        <form id="applyForm" onsubmit="return validateForm()">
+        <form id="applyForm" th:action="@{/apply/register}" method="post">
             <div class="register">
                 <div class="container">
                     <div class="form-group">
@@ -73,12 +73,22 @@
                     </div>
                     <div class="form-group">
                         <label>접수 일련번호</label>
-                        <input type="text" id="rcvSeqNo" name="rcvSeqNo" th:value="${receiveApplyDTO.rcvSeqNo}" disabled>
+                        <input type="text" id="rcvSeqNo" name="rcvSeqNo" th:value="${receiveApplyDTO.rcvSeqNo}" >
                     </div>
                     <div>
-                        <button type="button" onclick="checkSsn()">조회</button>
+                        <button type="submit" th:formaction="@{/apply/detail}" onclick="return checkSsn()">조회</button>
                     </div>
                 </div>
+                <script th:inline="javascript">
+                    /*<![CDATA[*/
+                    var msg = /*[[${message}]]*/ null;
+
+                    if (msg != null && msg.trim() !== "") {
+                        alert(msg);
+                    }
+                    /*]]>*/
+                </script>
+
                 <hr>
 
                 <div class="container">
@@ -88,8 +98,8 @@
                     </div>
                     <div class="form-group">
                         <label>신청구분</label>
-                        <select class="apply-class-select" id="applClas" name="applClas" th:value="${receiveApplyDTO.applClas}">
-                            <option value="" disabled selected>선택</option>
+                        <select class="apply-class-select" id="applClas" name="applClas" th:field="${receiveApplyDTO.applClas}" th:value="${receiveApplyDTO.applClas}">
+                            <option value=""  selected>선택</option>
                              <option th:each="c : ${C007}"
                                      th:value="${c.code}"
                                      th:text="${c.codeNm}"
@@ -98,8 +108,8 @@
                     </div>
                     <div class="form-group">
                         <label>브랜드</label>
-                        <select class="apply-brand-select" id="brd" name="brd" th:value="${receiveApplyDTO.brd}">
-                            <option value="" disabled selected>선택</option>
+                        <select class="apply-brand-select" id="brd" name="brd" th:field="${receiveApplyDTO.brd}" th:value="${receiveApplyDTO.brd}">
+                            <option value=""  selected>선택</option>
                             <option th:each="c : ${C004}"
                                     th:value="${c.code}"
                                     th:text="${c.codeNm}"
@@ -136,8 +146,8 @@
                 <div class="container">
                     <div class="form-group">
                         <label>결제일자</label>
-                        <select class="bill-date-select" id="stlDd" name="stlDd" th:value="${receiveApplyDTO.stlDd}">
-                            <option value="" disabled selected>선택</option>
+                        <select class="bill-date-select" id="stlDd" name="stlDd" th:field="${receiveApplyDTO.stlDd}" th:value="${receiveApplyDTO.stlDd}">
+                            <option value=""  selected>선택</option>
                             <option th:each="c : ${C009}"
                                     th:value="${c.code}"
                                     th:text="${c.codeNm}"
@@ -146,8 +156,8 @@
                     </div>
                     <div class="form-group">
                         <label>결제방법</label>
-                        <select class="bill-method-select" id="stlMtd" name="stlMtd" th:value="${receiveApplyDTO.stlMtd}">
-                            <option value="" disabled selected>선택</option>
+                        <select class="bill-method-select" id="stlMtd" name="stlMtd" th:field="${receiveApplyDTO.stlMtd}" th:value="${receiveApplyDTO.stlMtd}">
+                            <option value=""  selected>선택</option>
                             <option th:each="c : ${C002}"
                                     th:value="${c.code}"
                                     th:text="${c.codeNm}"
@@ -156,8 +166,8 @@
                     </div>
                     <div class="form-group">
                         <label>결제은행</label>
-                        <select class="bill-bank-select" id="bnkCd" name="bnkCd" th:value="${receiveApplyDTO.bnkCd}">
-                            <option value="" disabled selected>선택</option>
+                        <select class="bill-bank-select" id="bnkCd" name="bnkCd" th:field="${receiveApplyDTO.bnkCd}" th:value="${receiveApplyDTO.bnkCd}">
+                            <option value=""  selected>선택</option>
                             <option th:each="c : ${C003}"
                                     th:value="${c.code}"
                                     th:text="${c.codeNm}"
@@ -183,8 +193,8 @@
                 <div class="container">
                     <div class="form-group">
                         <label>청구서 발송방법</label>
-                        <select class="bill-send-method-select" id="stmtSndMtd" name="stmtSndMtd" th:value="${receiveApplyDTO.stmtSndMtd}">
-                            <option value="" disabled selected>선택</option>
+                        <select class="bill-send-method-select" id="stmtSndMtd" name="stmtSndMtd" th:field="${receiveApplyDTO.stmtSndMtd}" th:value="${receiveApplyDTO.stmtSndMtd}">
+                            <option value=""  selected>선택</option>
                             <option th:each="c : ${C006}"
                                     th:value="${c.code}"
                                     th:text="${c.codeNm}"
@@ -211,11 +221,11 @@
                             oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');"
                         >
                         @
-                        <input type="text" id="emailAdr2" name="emailAdr2" th:value="${receiveApplyDTO.emailAdr1}" minlength="4" style="width: 80px;"
+                        <input type="text" id="emailAdr2" name="emailAdr2" th:value="${receiveApplyDTO.emailAdr2}" minlength="4" style="width: 80px;"
                             oninput="this.value = this.value.replace(/[^a-zA-Z0-9.]/g, '');"
                         >
                         <select class="domain-select"  id="userEmailDomain" name="userEmailDomain" onchange="domainSelect()">
-                            <option value="" disabled selected>선택</option>
+                            <option value=""  selected>선택</option>
                             <option value="naver.com">naver.com</option>
                             <option value="gmail.com">gmail.com</option>
                             <option value="daum.net">daum.net</option>
@@ -247,13 +257,13 @@
                     </div>
                     <div class="form-group">
                         <label>불능 사유명</label>
-                        <input type="text" id="impsbClas" name="impsbClas" th:value="${receiveApplyDTO.impsbClas}" style="width: 350px;" disabled>
+                        <input type="text" id="impsbCdNm" name="impsbCdNm" th:value="${receiveApplyDTO.impsbCdNm}" style="width: 350px;" disabled>
                     </div>
                 </div>
                 <div class="container">
                     <div style="margin-left: auto;">
-                        <button type="submit">등록</button>
-                        <button>수정</button>
+                        <button type="submit" onclick="return validateForm()">등록</button>
+                        <button type="button">수정</button>
                         <button type="button" onclick="resetForm()">초기화</button>
                     </div>
                 </div>
@@ -287,7 +297,6 @@
         }).open();
     }
 
-    let ssnVerify = false;
 
     /* 주민번호 체크 디지트 */
     function checkSsn() {
@@ -309,21 +318,38 @@
         sum = sum % 11; // 11로 나눈 나머지
         sum = 11 - sum; // 나머지를 11에서 뺌
 
-        if(ssn2V[6] == sum){
-            alert('조회에 성공했습니다.');
-            document.getElementById('ssn').value = ssn1V + '-' + ssn2V;
-            ssn1.disabled = true;
-            ssn2.disabled = true;
-            ssnVerify = true;
-        }
-        else{
+        if(ssn2V[6] != sum){
             alert('올바른 주민번호를 입력하여 주십시요.');
+            return false;
         }
+
+        const rcvSeqNo = document.getElementById('rcvSeqNo').value;
+        if(!rcvSeqNo || rcvSeqNo === ""){
+            alert("접수 일련번호를 입력해주세요.")
+            return false;
+        }
+        console.log("성공");
+        // alert('조회에 성공했습니다.');
+        return true;
     }
 
     /* 폼 초기화 */
     function resetForm() {
-        document.getElementById('applyForm').reset();
+        document.getElementById('ssn1').readonly = false;
+        document.getElementById('ssn2').readonly = false;
+        // document.getElementById('applyForm').reset();
+        const form = document.getElementById('applyForm');
+
+        // 접수일자 제외하고 초기화
+        form.querySelectorAll('input').forEach(input => {
+            if (input.type !== 'button' && input.type !== 'submit' && input.id !== 'rcvD') {
+                input.value = '';
+            }
+        });
+
+        form.querySelectorAll('select').forEach(select => {
+            select.selectedIndex = 0;
+        });
     }
 
 
@@ -411,8 +437,6 @@
                 scrtNoVerify = true;
 
             } else {
-                // messageSpan.textContent = '다른 비밀번호를 입력해주세요.'
-                // messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
                 scrtNoVerify = false;
             }
 
@@ -445,25 +469,27 @@
         // 전화번호 앞뒷자리와 동일한지
         const hdpNo = document.getElementById('hdpNo').value;
         if(hdpNo){
-            var idx1 = hdpNo.indexOf('-');
-            var idx2 = hdpNo.substring(idx1).indexOf('-');
-            var hdpNo1 = hdpNo.slice(index+1, idx2);
-            var hdpNo2 = hdepNo.slice(idx2);
+            var array = hdpNo.split("-");
+            var hdpNo1 = array[1];
+            var hdpNo2 = array[2];
 
-            console.log(hdpNo1);
-            console.log(hdpNo2);
+            if(scrtNo.includes(hdpNo1) || scrtNo.includes(hdpNo2)){
+                messageSpan.textContent = '전화번호가 아닌 값을 입력해주세요.'
+                messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
+                return false;
+            }
         }
 
-
         // 동일 번호 존재하는지
-        var regex = /^(\d)\1+$/;
-        // if(regex.test(scrtNo)){
-        //     messageSpan.textContent = '동일 번호가 아닌 값을 입력해주세요.'
-        //     messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
-        //     return false;
-        // }
+        var regex = /(0000)|(1111)|(2222)|(3333)|(4444)|(5555)|(6666)|(7777)|(8888)|(9999)/;
+        if(regex.test(scrtNo)){
+            messageSpan.textContent = '동일 번호가 아닌 값을 입력해주세요.'
+            messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
+            return false;
+        }
+
         // 연속 번호 존재하는지
-        regex = /(0123)|(1234)|(2345)|(3456)|(4567)|(5678)|(6789)|(7890)|(0987)|(9876)|(8765)|(7654)|(6543)|(5432)|(4321)|(3210)/;
+        regex = /(0123)|(1234)|(2345)|(3456)|(4567)|(5678)|(6789)|(9876)|(8765)|(7654)|(6543)|(5432)|(4321)|(3210)/;
         if(regex.test(scrtNo)){
             messageSpan.textContent = '연속 번호가 아닌 값을 입력해주세요.'
             messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
@@ -480,8 +506,258 @@
         document.getElementById("emailAdr2").value = val;
     }
 
+    function validateApplD() {
+        const applD = document.getElementById('applD').value;
+        if (!applD || applD === "") {
+            alert('신청일자를 입력해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateApplClas() {
+        const applClas = document.getElementById('applClas').value;
+        if (!applClas || applClas === "") {
+            alert('신청구분을 선택해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateBrd() {
+        const brd = document.getElementById('brd').value;
+        if (!brd || brd === "") {
+            alert('카드 브랜드를 선택해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateHgNm() {
+        const hgNm = document.getElementById('hgNm').value;
+        if (!hgNm || hgNm === "") {
+            alert('성명(한글)을 입력해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateEngNm() {
+        const engNm = document.getElementById('engNm').value;
+        if (!engNm || engNm === "") {
+            alert('성명(영문)을 입력해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateBirth() {
+        const birthD = document.getElementById('birthD').value;
+        if (!birthD || birthD === "") {
+            alert('생년월일을 입력해주세요.');
+            return false;
+        }
+        else if(!birthDVerify){
+            alert('올바른 생년월일을 입력하여 주십시요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateStlDd() {
+        const stlDd = document.getElementById('stlDd').value;
+        if (!stlDd || stlDd === "") {
+            alert('결제일자를 선택해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateStlMtd() {
+        const stlMtd = document.getElementById('stlMtd').value;
+        if (!stlMtd || stlMtd === "") {
+            alert('결제방법을 선택해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    /* 결제은행 (결제방식 = '지로 1'인 경우 입력 불필요 */
+    function validateBnkCd() {
+        const bnkCd = document.getElementById('bnkCd').value;
+        const stlMtd = document.getElementById('stlMtd').value;
+
+        if(stlMtd === "1"){
+            return true;
+        }
+        else if (!bnkCd || bnkCd === "") {
+            alert('결제은행을 선택해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    /* 결제계좌 (결제방식 = '지로 1'인 경우 입력 불필요 */
+    function validateStlAct() {
+        const stlAct = document.getElementById('stlAct').value;
+        const prcsClas = document.getElementById('prcsClasValid').value;
+        const stlMtd = document.getElementById('stlMtd').value;
+
+        if(stlMtd === "1"){
+            return true;
+        }
+        else if (!stlAct || stlAct === "") {
+            alert('결제계좌를 입력해주세요.');
+            return false;
+        }
+        else if(prcsClas !== '1'){
+            alert('결제계좌를 인증해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateSsn() {
+        let ssn1 = document.getElementById('ssn1');
+        let ssn2 = document.getElementById('ssn2');
+        const checkDigit = [2,3,4,5,6,7,8,9,2,3,4,5];
+
+        let ssn1V = ssn1.value;
+        let ssn2V = ssn2.value;
+
+        let sum = 0;
+        for(let i = 0; i < ssn1V.length; i++){
+            sum = sum + (ssn1V[i] * checkDigit[i]);
+        }
+        for(let i = 0; i < ssn2V.length-1; i++){
+            sum = sum + (ssn2V[i] * checkDigit[i+6]);
+        }
+
+        sum = sum % 11; // 11로 나눈 나머지
+        sum = 11 - sum; // 나머지를 11에서 뺌
+
+        if(ssn2V[6] == sum){
+            ssn1.readonly = true;
+            ssn2.readonly = true;
+            return true;
+        }
+        else{
+            alert('올바른 주민번호를 입력하여 주십시요.');
+            return false;
+        }
+    }
+
+    function validateHdp() {
+        const hdpNo = document.getElementById('hdpNo').value;
+        if(!hdpNo || hdpNo === ""){
+            alert("핸드폰 번호를 입력해주세요.")
+            return false;
+        }
+        else if(!hdpNoVerify){
+            alert('올바른 핸드폰 번호를 입력하여 주십시요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateScrt() {
+        const scrtNo = document.getElementById('scrtNo').value;
+        if(!scrtNo || scrtNo === ""){
+            alert("비밀번호를 입력해주세요.")
+            return false;
+        }
+        else if(!scrtNoVerify){
+            alert('올바른 비밀번호를 입력하여 주십시요.');
+            return false;
+        }
+        return true;
+    }
+
+
+    /* 청구서 발송방법 & 그에 따른 체크 */
+    /* 1. 우편(청구지 주소 필수), 2. E-MAIL(E-MAIL 필수), 3. 청구서 사절(청구지주소,E-MAIL 미입력 가능) */
+    function validateStmtSndMtd() {
+        const stmtSndMtd = document.getElementById('stmtSndMtd').value;
+        if(!stmtSndMtd || stmtSndMtd === ""){
+            alert("청구서 발송방법을 선택해주세요.");
+            return false;
+        }
+        else if(stmtSndMtd === "1"){
+            const billAdr1 = document.getElementById('billAdr1').value;
+            const billAdr2 = document.getElementById('billAdr2').value;
+            const billZip = document.getElementById('billZip').value;
+            if(!billAdr1 || billAdr1 === "" || !billAdr2 || billAdr2 === "" || !billZip || billZip === ""){
+                alert("(우편 방식) 주소를 입력해주세요");
+                return false;
+            }
+            return true;
+        }
+        else if(stmtSndMtd === "2"){
+            const emailAdr1 = document.getElementById('emailAdr1').value;
+            const emailAdr2 = document.getElementById('emailAdr2').value;
+            if(!emailAdr1 || emailAdr1 === "" || !emailAdr2 || emailAdr2 === ""){
+                alert("(E-MAIL 방식) 이메일을 입력해주세요.");
+                return false;
+            }
+            return true;
+        }
+        return true;
+    }
+
+    /* 청구서 방법의 필수 필드 아니여도, 입력했을시 검증 */
+    function validateStmtSndMtdOther() {
+        // 결제 계좌 입력한 경우 인증필요
+        const prcsClas = document.getElementById('prcsClasValid').value;
+        const stlAct = document.getElementById('stlAct').value;
+        if (stlAct && prcsClas !== '1'){
+            alert('결제계좌를 인증해주세요.');
+            return false;
+        }
+        // 우편 관련 입력한 경우 다른 필드 입력필요
+        const billAdr1 = document.getElementById('billAdr1').value;
+        const billAdr2 = document.getElementById('billAdr2').value;
+        const billZip = document.getElementById('billZip').value;
+        if(billAdr1 || billAdr2 || billZip){
+            if(billAdr1 && billAdr2 && billZip) // 전부 입력한 경우
+                return true;
+            else {
+                alert("우편번호와 상세주소를 둘다 입력해주세요");
+                return false;
+            }
+        }
+
+        // 이메일 관련 입력한 경우 다른 필드 입력필요
+        const emailAdr1 = document.getElementById('emailAdr1').value;
+        const emailAdr2 = document.getElementById('emailAdr2').value;
+        if(emailAdr1 || emailAdr2){
+            if(emailAdr1 && emailAdr2)
+                return true;
+            else {
+                alert("이메일과 도메인을 둘다 입력해주세요.");
+                return false;
+            }
+        }
+
+        return true;
+    }
 
     /* 입력 폼 정보 체크 */
+    function validateForm() {
+        if(!validateSsn()
+            || !validateApplD() || !validateApplClas() || !validateBrd()
+            || !validateHgNm() || !validateEngNm() || !validateBirth()
+            || !validateStlDd() || !validateStlMtd() || !validateBnkCd()
+            || !validateStlAct()
+            || !validateStmtSndMtd() || !validateStmtSndMtdOther()
+            || !validateHdp() || !validateScrt())
+        {
+            return false;
+        }
+        else {
+            alert("등록 완료!");
+            return true;
+        }
+    }
 
 
 </script>

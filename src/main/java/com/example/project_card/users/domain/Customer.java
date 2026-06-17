@@ -42,4 +42,11 @@ public class Customer {
     {
         return new Customer(custNo, ssn, regD, hgNm, birthD, hdpNo);
     }
+
+    public void updateCustomer(String hgNm, String birthD, String hdpNo)
+    {
+        this.hgNm = hgNm;
+        this.birthD = birthD;
+        this.hdpNo = hdpNo;
+    }
 }

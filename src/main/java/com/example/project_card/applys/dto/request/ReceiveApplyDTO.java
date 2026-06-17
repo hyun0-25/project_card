@@ -31,15 +31,15 @@ public record ReceiveApplyDTO(
         String emailAdr1,
         String emailAdr2,
         String crdNo,
-        String impsbClas,
-        String impsbCd
+        String impsbCd,
+        String impsbCdNm
 ) {
-    public static ReceiveApplyDTO EmptyReceiveApplyInfo()
+    public static ReceiveApplyDTO EmptyReceiveApplyInfo(String ssn1, String ssn2)
     {
-        return new ReceiveApplyDTO("", "", LocalDate.now(), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+        return new ReceiveApplyDTO(ssn1, ssn2, LocalDate.now(), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
     }
 
-    public static ReceiveApplyDTO fromReceiveApply(ReceiveApply receiveApply)
+    public static ReceiveApplyDTO fromReceiveApply(ReceiveApply receiveApply, String codeNm)
     {
         return ReceiveApplyDTO.builder()
                 .ssn1(receiveApply.getSsn().split("-")[0])
@@ -63,11 +63,11 @@ public record ReceiveApplyDTO(
                 .hdpNo(receiveApply.getHdpNo())
                 .brd(receiveApply.getBrd())
                 .scrtNo(receiveApply.getScrtNo())
-                .emailAdr1(receiveApply.getEmailAdr().split("@")[0])
-                .emailAdr2(receiveApply.getEmailAdr().split("@")[1])
+                .emailAdr1(receiveApply.getEmailAdr() == null ? "" : receiveApply.getEmailAdr().split("@")[0])
+                .emailAdr2(receiveApply.getEmailAdr() == null  ? "" : receiveApply.getEmailAdr().split("@")[1])
                 .crdNo(receiveApply.getCrdNo())
-                .impsbClas(receiveApply.getImpsbClas())
                 .impsbCd(receiveApply.getImpsbCd())
+                .impsbCdNm(receiveApply.getImpsbCd() == null  ? "정상 등록" : "불능 - " + codeNm)
                 .build();
     }
 }
