@@ -4,7 +4,6 @@ import com.example.project_card.applys.domain.NoSeq;
 import com.example.project_card.applys.domain.ReceiveApply;
 import com.example.project_card.applys.domain.SeqNo;
 import com.example.project_card.applys.dto.request.ReceiveApplyDTO;
-import com.example.project_card.applys.dto.request.ReceiveApplyDetailDTO;
 import com.example.project_card.applys.exception.ReceiveApplyErrorCode;
 import com.example.project_card.applys.exception.BillErrorCode;
 import com.example.project_card.applys.repository.NoSeqRepository;
@@ -44,17 +43,90 @@ public class ApplyService {
     private final CustomerRepository customerRepository;
     private final BillRepository billRepository;
 
+    public ReceiveApplyDTO ReceiveApplyModify(ReceiveApplyDTO receiveApplyDTO)
+    {
+        log.info("{ ApplyService } : ReceiveApplyModify 수정");
+        String ssn = receiveApplyDTO.ssn1() + "-" +receiveApplyDTO.ssn2();
+        /* 불능 체크 */
+        ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C007", receiveApplyDTO.applClas());
+        if(comCodeDtl == null)
+            throw BaseException.type(ReceiveApplyErrorCode.APPLY_CLAS_NOT_FOUND);
+
+        /* 수정 가능 여부 */
+        ReceiveApply receiveApply = receiveApplyRepository.findBySsnAndRcvDAndRcvSeqNo(ssn, String.valueOf(receiveApplyDTO.rcvD()), receiveApplyDTO.rcvSeqNo());
+        // 입회 신청 정보가 없는 경우
+        if(receiveApply == null)
+            throw BaseException.type(ReceiveApplyErrorCode.RECEIVE_APPLY_NOT_FOUND);
+        // 이미 카드를 발급받은 경우
+        if(receiveApply.getCrdNo() != null)
+            throw BaseException.type(ReceiveApplyErrorCode.RECEIVE_APPLY_CANNOT_MODIFIED);
+
+        /* 수정하는 신청구분 */
+        String applClasCodeNm = comCodeDtl.getCodeNm();
+        switch (applClasCodeNm) {
+            case "최초신규" -> {
+                // 기존카드 소지 여부
+                Long existCard = cardRepository.countBySsn(ssn);
+                if (existCard > 0) // 불능코드 04 (기존카드 존재)
+                    return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "04");
+            }
+            case "추가신규" -> {
+                // 기존카드 소지 여부 (자유인 체크)
+                Long existCard = cardRepository.countBySsn(ssn);
+                log.info(" >> count : "+existCard);
+                if (existCard == 0) // 불능코드 05 (기존카드 미존재)
+                    return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "05");
+
+                // 동일 브랜드 카드 소지 여부
+                Long existBrdCard = cardRepository.countBySsnAndBrd(ssn, receiveApplyDTO.brd());
+                if (existBrdCard > 0) // 불능코드 04 (기존카드 존재)
+                    return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "04");
+            }
+            case "재발급" -> {
+                // 기존카드 소지 여부 (자유인 체크)
+                Long existCard = cardRepository.countBySsn(ssn);
+                if (existCard == 0) // 불능코드 05 (기존카드 미존재)
+                    return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "05");
+
+                // 동일 브랜드 최종카드 소지 여부
+                Card lstBrdCard = cardRepository.findBySsnAndBrdAndLstCrdF(ssn, receiveApplyDTO.brd(), "1");
+                if (lstBrdCard == null) // 불능코드 05 (기존카드 미존재)
+                    return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "05");
+            }
+        }
+
+        /* 당일 가입신청 검증 */
+        if(comCodeDtl.getCodeNm().equals("최초신규") || comCodeDtl.getCodeNm().equals("추가신규"))
+        {
+            receiveApply = receiveApplyRepository.findBySsnAndRcvDAndImpsbClas(ssn, String.valueOf(receiveApplyDTO.rcvD()), "");
+            if(receiveApply != null) // 불능코드 01 (당일신청내역 존재)
+                return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "01");
+        }
+
+        /* 결제계좌 검증 */
+        if(!ValidStlAct(receiveApplyDTO.stlAct())) // 불능코드 02 (결제계좌 오류)
+            return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "02");
+
+        /* 비밀번호 검증 */
+        if (!ValidScrtNo(receiveApplyDTO)) // 불능코드 03 (비밀번호 오류)
+            return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "03");
+
+        /* 정상 등록 */
+        return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "", "");
+    }
+
+
     public ReceiveApplyDTO ReceiveApply(ReceiveApplyDTO receiveApplyDTO)
     {
         log.info("{ ApplyService } : ReceiveApply 생성");
         String ssn = receiveApplyDTO.ssn1() + "-" +receiveApplyDTO.ssn2();
 
-        // 불능 체크
+        /* 불능 체크 */
         ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C007", receiveApplyDTO.applClas());
         if(comCodeDtl == null)
             throw BaseException.type(ReceiveApplyErrorCode.APPLY_CLAS_NOT_FOUND);
-        String applClasCodeNm = comCodeDtl.getCodeNm();
 
+        String applClasCodeNm = comCodeDtl.getCodeNm();
         switch (applClasCodeNm) {
             case "최초신규" -> {
                 // 기존카드 소지 여부
@@ -87,7 +159,7 @@ public class ApplyService {
             }
         }
 
-        // 당일 가입신청 검증
+        /* 당일 가입신청 검증 */
         if(comCodeDtl.getCodeNm().equals("최초신규") || comCodeDtl.getCodeNm().equals("추가신규"))
         {
             ReceiveApply receiveApply = receiveApplyRepository.findBySsnAndRcvDAndImpsbClas(ssn, String.valueOf(receiveApplyDTO.rcvD()), "");
@@ -95,15 +167,15 @@ public class ApplyService {
                 return SaveReceiveApply(ssn, applClasCodeNm, receiveApplyDTO, "1", "01");
         }
 
-        // 결제계좌 검증
+        /* 결제계좌 검증 */
         if(!ValidStlAct(receiveApplyDTO.stlAct())) // 불능코드 02 (결제계좌 오류)
             return SaveReceiveApply(ssn, applClasCodeNm, receiveApplyDTO, "1", "02");
 
-        // 비밀번호 검증
+        /* 비밀번호 검증 */
         if (!ValidScrtNo(receiveApplyDTO)) // 불능코드 03 (비밀번호 오류)
             return SaveReceiveApply(ssn, applClasCodeNm, receiveApplyDTO, "1", "03");
 
-        // 정상 등록
+        /* 정상 등록 */
         return SaveReceiveApply(ssn, applClasCodeNm, receiveApplyDTO, "", "");
     }
 
@@ -156,19 +228,19 @@ public class ApplyService {
         return (maxNoSeq == null) ? "1" : String.valueOf(Integer.parseInt(maxNoSeq) + 1);
     }
 
-    public ReceiveApplyDTO SaveReceiveApply(String ssn, String applClasCodeNm, ReceiveApplyDTO receiveApplyDTO, String impsbClas, String impsbCd)
+    public NoSeq CreateNoSeq()
     {
-        // 접수일련번호 발번
         String now = LocalDate.now().toString();
         String rcvSeqNo = GenerateNoSeq(now);
         NoSeq noSeq = NoSeq.createNoSeq(
                 now,
                 rcvSeqNo
         );
-        noSeqRepository.save(noSeq);
+        return noSeqRepository.save(noSeq);
+    }
 
-
-        // 등록
+    public ReceiveApply CreateReceiveApply(String ssn, String rcvSeqNo, ReceiveApplyDTO receiveApplyDTO, String impsbClas, String impsbCd)
+    {
         ReceiveApply receiveApply = ReceiveApply.createReceiveApply(
                 ssn,
                 receiveApplyDTO.rcvD().toString(),
@@ -195,7 +267,42 @@ public class ApplyService {
                 impsbClas,
                 impsbCd
         );
-        ReceiveApply newReceiveApply = receiveApplyRepository.save(receiveApply);
+        return receiveApplyRepository.save(receiveApply);
+    }
+    public void ModifyReceiveApply(ReceiveApply receiveApply, ReceiveApplyDTO receiveApplyDTO, String impsbClas, String impsbCd)
+    {
+        receiveApply.updateReceiveApply(
+                receiveApplyDTO.applD(),
+                receiveApplyDTO.birthD(),
+                receiveApplyDTO.hgNm(),
+                receiveApplyDTO.engNm(),
+                receiveApplyDTO.stlMtd(),
+                receiveApplyDTO.stlAct(),
+                receiveApplyDTO.bnkCd(),
+                receiveApplyDTO.stlDd(),
+                "", // 관리 영업점
+                receiveApplyDTO.applClas(),
+                receiveApplyDTO.stmtSndMtd(),
+                receiveApplyDTO.billAdr1(),
+                receiveApplyDTO.billAdr2(),
+                receiveApplyDTO.billZip(),
+                receiveApplyDTO.hdpNo(),
+                receiveApplyDTO.brd(),
+                receiveApplyDTO.scrtNo(),
+                receiveApplyDTO.emailAdr1().equals("") ? "" : receiveApplyDTO.emailAdr1()+ "@" + receiveApplyDTO.emailAdr2(),
+                "",
+                impsbClas,
+                impsbCd
+        );
+    }
+
+    public ReceiveApplyDTO UpdateReceiveApply(ReceiveApply receiveApply, String applClasCodeNm, ReceiveApplyDTO receiveApplyDTO, String impsbClas, String impsbCd)
+    {
+        /* 접수일련번호 이미 있음 */
+        NoSeq noSeq = noSeqRepository.findByRcvDAndRcvSeqNo(receiveApply.getRcvD(), receiveApply.getRcvSeqNo());
+
+        // 수정
+        ModifyReceiveApply(receiveApply, receiveApplyDTO, impsbClas, impsbCd);
 
         String codeNm = "";
         if(impsbClas.equals("1"))
@@ -204,10 +311,37 @@ public class ApplyService {
             codeNm = comCodeDtl.getCodeNm();
         }
 
+        ReceiveApplyDTO newReceiveApplyDTO = ReceiveApplyDTO.fromReceiveApply(receiveApply, codeNm);
+        log.info("{ ApplyService } : ReceiveApply 수정 완료");
+
+        /* 정상 등록시 (고객/결제/카드 테이블 insert 또는 update) */
+        if(!impsbClas.equals("1"))
+            SavePsbReceiveApply(receiveApply.getSsn(), noSeq, applClasCodeNm, receiveApplyDTO);
+
+        return newReceiveApplyDTO;
+    }
+
+    public ReceiveApplyDTO SaveReceiveApply(String ssn, String applClasCodeNm, ReceiveApplyDTO receiveApplyDTO, String impsbClas, String impsbCd)
+    {
+        /* 접수일련번호 발번 */
+        NoSeq noSeq = CreateNoSeq();
+        String rcvSeqNo = noSeq.getRcvSeqNo();
+
+        // 등록
+        ReceiveApply newReceiveApply = CreateReceiveApply(ssn, rcvSeqNo, receiveApplyDTO, impsbClas, impsbCd);
+
+        String codeNm = "";
+        if(impsbClas.equals("1"))
+        {
+            ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C001", impsbCd);
+            codeNm = comCodeDtl.getCodeNm();
+        }
+
+        log.info("newReceiveApply : "+newReceiveApply.getEmailAdr());
         ReceiveApplyDTO newReceiveApplyDTO = ReceiveApplyDTO.fromReceiveApply(newReceiveApply, codeNm);
         log.info("{ ApplyService } : ReceiveApply 생성 완료");
 
-        // 정상 등록시 (고객/결제/카드 테이블 insert 또는 update)
+        /* 정상 등록시 (고객/결제/카드 테이블 insert 또는 update) */
         if(!impsbClas.equals("1"))
             SavePsbReceiveApply(ssn, noSeq, applClasCodeNm, receiveApplyDTO);
 
@@ -226,29 +360,6 @@ public class ApplyService {
         return (maxCrdNo == null) ? "111111111" : String.valueOf(Long.parseLong(maxCrdNo) + 1);
     }
 
-    public String checkCrdNo(String number)
-    {
-        int[] checkDigit = {2,3,4,5,6,7,8,9,2,3,4,5,6,7,8};
-        char[] crd = number.toCharArray();
-        int sum = 0;
-        for(int i = 0; i < 15; i++)
-        {
-            sum += checkDigit[i] * (crd[i] - '0');
-        }
-
-        sum %= 11;
-        sum = 11 - sum;
-
-        // 16자리 반환
-        return number + (char) (sum + '0');
-    }
-
-    public String CalculateVldDur()
-    {
-        LocalDate endDate = LocalDate.now().plusYears(5).minusMonths(1);
-        return endDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-    }
-
     public void SavePsbReceiveApply(String ssn, NoSeq noSeq, String applClasCodeNm, ReceiveApplyDTO receiveApplyDTO)
     {
         log.info("{ ApplyService } : SavePsbReceiveApply 정상등록 생성");
@@ -262,7 +373,7 @@ public class ApplyService {
 
         switch (applClasCodeNm) {
             case "최초신규" -> {
-                // 고객번호 발번
+                /* 고객번호 발번 */
                 custNo = GenerateCustNo();
 
                 // 고객 insert
@@ -339,17 +450,21 @@ public class ApplyService {
             }
         }
 
-        // 관리번호 발번
+        /* 관리번호 발번 */
         log.info(" >> custNo : "+ custNo);
         log.info(" >> crdNo : "+cN);
+        SeqNo seqNo = CreateSeqNo(custNo, cN);
 
+        log.info("{ ApplyService } : SavePsbReceiveApply 정상등록 생성 완료");
+    }
+
+    public SeqNo CreateSeqNo(String custNo, String cN)
+    {
         SeqNo seqNo = SeqNo.createSeqNo(
                 custNo,
                 cN
         );
-        seqNoRepository.save(seqNo);
-
-        log.info("{ ApplyService } : SavePsbReceiveApply 정상등록 생성 완료");
+        return seqNoRepository.save(seqNo);
     }
 
     public void UpdateApply(String ssn, NoSeq noSeq, String crdNo)
@@ -391,10 +506,9 @@ public class ApplyService {
     public Card CreateCard(ReceiveApplyDTO receiveApplyDTO, String codeNm, String custNo, String ssn, String bfCrdNo)
     {
 
-        // 카드번호 발번
+        /* 카드번호 발번 */
         String cN = GenerateCrdNo(); // 일련번호 9자리
         String crdGrd = "11"; // 등급 2자리
-
 
         String brdNo = Brand.valueOf(codeNm).getNumber(); // 브랜드 4자리
         String crdNo = checkCrdNo(brdNo + crdGrd + cN);
@@ -435,5 +549,30 @@ public class ApplyService {
         receiveApplyDTO = ReceiveApplyDTO.fromReceiveApply(receiveApply, codeNm);
         log.info("{ ApplyService } : ReceiveApplyDetail 조회 완료");
         return receiveApplyDTO;
+    }
+
+
+
+    public String checkCrdNo(String number)
+    {
+        int[] checkDigit = {2,3,4,5,6,7,8,9,2,3,4,5,6,7,8};
+        char[] crd = number.toCharArray();
+        int sum = 0;
+        for(int i = 0; i < 15; i++)
+        {
+            sum += checkDigit[i] * (crd[i] - '0');
+        }
+
+        sum %= 11;
+        sum = 11 - sum;
+
+        // 16자리 반환
+        return number + (char) (sum + '0');
+    }
+
+    public String CalculateVldDur()
+    {
+        LocalDate endDate = LocalDate.now().plusYears(5).minusMonths(1);
+        return endDate.format(DateTimeFormatter.ofPattern("yyyy-MM"));
     }
 }

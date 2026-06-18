@@ -91,12 +91,38 @@ public class ReceiveApply {
         this.impsbCd = impsbCd;
     }
 
-    public static ReceiveApply createReceiveApply(String ssn, String rcvD, String rcvSeqNo, String applD, String birthD, String hgNm, String engNm, String stlMtd, String stlAct, String bnkCd, String stlDd, String mgtBbrn, String applClas, String stmtSndMtd, String billAdr1, String billAdr2, String billZip, String hdpNo, String brd, String scrtNo, String emailAdr, String crdNo, String impsbClas, String impsbCd) {
+    public static ReceiveApply createReceiveApply(String ssn, String rcvD, String rcvSeqNo, String applD, String birthD, String hgNm, String engNm, String stlMtd, String stlAct, String bnkCd, String stlDd, String mgtBbrn, String applClas, String stmtSndMtd, String billAdr1, String billAdr2, String billZip, String hdpNo, String brd, String scrtNo, String emailAdr, String crdNo, String impsbClas, String impsbCd)
+    {
         return new ReceiveApply(ssn, rcvD, rcvSeqNo, applD, birthD, hgNm, engNm, stlMtd, stlAct, bnkCd, stlDd, mgtBbrn, applClas, stmtSndMtd, billAdr1, billAdr2, billZip, hdpNo, brd, scrtNo, emailAdr, crdNo, impsbClas, impsbCd);
     }
 
     public void updateReceiveApplyCrdNo(String crdNo)
     {
         this.crdNo = crdNo;
+    }
+
+    public void updateReceiveApply(String applD, String birthD, String hgNm, String engNm, String stlMtd, String stlAct, String bnkCd, String stlDd, String mgtBbrn, String applClas, String stmtSndMtd, String billAdr1, String billAdr2, String billZip, String hdpNo, String brd, String scrtNo, String emailAdr, String crdNo, String impsbClas, String impsbCd)
+    {
+        this.applD = applD;
+        this.birthD = birthD;
+        this.hgNm = hgNm;
+        this.engNm = engNm;
+        this.stlMtd = stlMtd;
+        this.stlAct = stlAct;
+        this.bnkCd = bnkCd;
+        this.stlDd = stlDd;
+        this.mgtBbrn = mgtBbrn;
+        this.applClas = applClas;
+        this.stmtSndMtd = stmtSndMtd;
+        this.billAdr1 = billAdr1;
+        this.billAdr2 = billAdr2;
+        this.billZip = billZip;
+        this.hdpNo = hdpNo;
+        this.brd = brd;
+        this.scrtNo = scrtNo;
+        this.emailAdr = emailAdr;
+        this.crdNo = crdNo;
+        this.impsbClas = impsbClas;
+        this.impsbCd = impsbCd;
     }
 }

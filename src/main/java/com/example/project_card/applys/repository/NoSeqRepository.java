@@ -10,4 +10,6 @@ public interface NoSeqRepository extends JpaRepository<NoSeq, NoSeqId> {
     @Query("SELECT MAX(n.rcvSeqNo) FROM NoSeq n " +
             "WHERE n.rcvD = :rcvD")
     String findMaxNoSeqByRcvD(String rcvD);
+
+    NoSeq findByRcvDAndRcvSeqNo(String rcvD, String rcvSeqNo);
 }

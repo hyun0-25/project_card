@@ -187,7 +187,7 @@
                     <div class="form-group">
                         <label>결제계좌 확인여부</label>
                         <input type="hidden" id="prcsClas" name="prcsClas" th:value="${receiveApplyDTO.prcsClas}" style="width: 200px;" >
-                        <input type="text" id="prcsClasValid" name="prcsClasValid" style="width: 200px;" disabled>
+                        <input type="text" id="prcsClasValid" name="prcsClasValid" th:value="${receiveApplyDTO.prcsClas == '1'} ? '인증 완료' : ''" style="width: 200px;" disabled>
                     </div>
                 </div>
                 <div class="container">
@@ -263,7 +263,7 @@
                 <div class="container">
                     <div style="margin-left: auto;">
                         <button type="submit" onclick="return validateForm()">등록</button>
-                        <button type="button">수정</button>
+                        <button type="submit" th:formaction="@{/apply/update}" onclick="return validateModifyForm()">수정</button>
                         <button type="button" onclick="resetForm()">초기화</button>
                     </div>
                 </div>
@@ -355,6 +355,27 @@
 
     /* 생년월일 */
     let birthDVerify = false;
+    function funcBirthDVerify() {
+        const birthD = document.getElementById('birthD').value;
+        const messageSpan = document.getElementById('birthDMatchMessage');
+
+        if (birthD) {
+            if (validateBirthD(birthD)) {
+                messageSpan.textContent = '유효한 생년월일입니다.';
+                messageSpan.style.cssText = 'color: green; font-size: 0.7em; margin-left: 5px;';
+                birthDVerify = true;
+
+            } else {
+                messageSpan.textContent = '생년월일은 8자입니다. ex) 19991018'
+                messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
+                birthDVerify = false;
+            }
+
+        } else {
+            messageSpan.textContent = '';
+            birthDVerify = false;
+        }
+    }
     document.getElementById('birthD').addEventListener('input', function () {
         const birthD = this.value;
         const messageSpan = document.getElementById('birthDMatchMessage');
@@ -390,13 +411,36 @@
             return false;
         }
         else {
-            document.getElementById('prcsClasValid').value = '1';
+            document.getElementById('prcsClas').value = '1';
             document.getElementById('prcsClasValid').value = '인증 완료';
+            alert('결제계좌가 인증되었습니다.');
+            return true;
         }
     }
 
     /* 전화번호 */
     let hdpNoVerify = false;
+    function funcHdpNo() {
+        const hdpNo = document.getElementById('hdpNo').value;
+        const messageSpan = document.getElementById('hdpNoMatchMessage');
+
+        if (hdpNo) {
+            if (validateHdpNo(hdpNo)) {
+                messageSpan.textContent = '유효한 핸드폰 번호입니다.';
+                messageSpan.style.cssText = 'color: green; font-size: 0.7em; margin-left: 5px;';
+                hdpNoVerify = true;
+
+            } else {
+                messageSpan.textContent = '다시 입력해주세요. ex) 010-1004-1004'
+                messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
+                hdpNoVerify = false;
+            }
+
+        } else {
+            messageSpan.textContent = '';
+            hdpNoVerify = false;
+        }
+    }
     document.getElementById('hdpNo').addEventListener('input', function () {
         const hdpNo = this.value;
         const messageSpan = document.getElementById('hdpNoMatchMessage');
@@ -426,6 +470,25 @@
 
     /* 비밀번호 */
     let scrtNoVerify = false;
+    function funcScrtNoVerify() {
+        const scrtNo = document.getElementById('scrtNo').value;
+        const messageSpan = document.getElementById('scrtNoMatchMessage');
+
+        if (scrtNo) {
+            if (validateScrtNo(scrtNo, messageSpan) && checkScrtNo(scrtNo, messageSpan)) {
+                messageSpan.textContent = '유효한 비밀번호입니다.';
+                messageSpan.style.cssText = 'color: green; font-size: 0.7em; margin-left: 5px;';
+                scrtNoVerify = true;
+
+            } else {
+                scrtNoVerify = false;
+            }
+
+        } else {
+            messageSpan.textContent = '';
+            scrtNoVerify = false;
+        }
+    }
     document.getElementById('scrtNo').addEventListener('input', function () {
         const scrtNo = this.value;
         const messageSpan = document.getElementById('scrtNoMatchMessage');
@@ -600,7 +663,7 @@
     /* 결제계좌 (결제방식 = '지로 1'인 경우 입력 불필요 */
     function validateStlAct() {
         const stlAct = document.getElementById('stlAct').value;
-        const prcsClas = document.getElementById('prcsClasValid').value;
+        const prcsClas = document.getElementById('prcsClas').value;
         const stlMtd = document.getElementById('stlMtd').value;
 
         if(stlMtd === "1"){
@@ -614,6 +677,7 @@
             alert('결제계좌를 인증해주세요.');
             return false;
         }
+        alert('결제계좌가 인증되었습니다.')
         return true;
     }
 
@@ -707,7 +771,7 @@
     /* 청구서 방법의 필수 필드 아니여도, 입력했을시 검증 */
     function validateStmtSndMtdOther() {
         // 결제 계좌 입력한 경우 인증필요
-        const prcsClas = document.getElementById('prcsClasValid').value;
+        const prcsClas = document.getElementById('prcsClas').value;
         const stlAct = document.getElementById('stlAct').value;
         if (stlAct && prcsClas !== '1'){
             alert('결제계좌를 인증해주세요.');
@@ -743,7 +807,13 @@
 
     /* 입력 폼 정보 체크 */
     function validateForm() {
-        if(!validateSsn()
+        const impsbCd = document.getElementById('impsbCd').value;
+
+        if(impsbCd) {
+            alert("이미 등록된 신청서입니다. 수정 버튼을 눌러주세요.");
+            return false;
+        }
+        else if(!validateSsn()
             || !validateApplD() || !validateApplClas() || !validateBrd()
             || !validateHgNm() || !validateEngNm() || !validateBirth()
             || !validateStlDd() || !validateStlMtd() || !validateBnkCd()
@@ -755,6 +825,29 @@
         }
         else {
             alert("등록 완료!");
+            return true;
+        }
+    }
+
+    function validateModifyForm() {
+        funcBirthDVerify();
+        funcHdpNo();
+        funcScrtNoVerify();
+
+        const impsbCd = document.getElementById('impsbCd').value;
+
+        if(!validateSsn()
+            || !validateApplD() || !validateApplClas() || !validateBrd()
+            || !validateHgNm() || !validateEngNm() || !validateBirth()
+            || !validateStlDd() || !validateStlMtd() || !validateBnkCd()
+            || !validateStlAct()
+            || !validateStmtSndMtd() || !validateStmtSndMtdOther()
+            || !validateHdp() || !validateScrt())
+        {
+            return false;
+        }
+        else {
+            alert("수정 완료!");
             return true;
         }
     }

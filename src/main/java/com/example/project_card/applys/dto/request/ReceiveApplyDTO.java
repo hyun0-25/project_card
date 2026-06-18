@@ -55,7 +55,7 @@ public record ReceiveApplyDTO(
                 .bnkCd(receiveApply.getBnkCd())
                 .stlDd(receiveApply.getStlDd())
                 .applClas(receiveApply.getApplClas())
-                .prcsClas("1")
+                .prcsClas(receiveApply.getStlAct() == null || receiveApply.getStlAct().isEmpty() ? "" : "1")
                 .stmtSndMtd(receiveApply.getStmtSndMtd())
                 .billAdr1(receiveApply.getBillAdr1())
                 .billAdr2(receiveApply.getBillAdr2())
@@ -63,11 +63,11 @@ public record ReceiveApplyDTO(
                 .hdpNo(receiveApply.getHdpNo())
                 .brd(receiveApply.getBrd())
                 .scrtNo(receiveApply.getScrtNo())
-                .emailAdr1(receiveApply.getEmailAdr() == null ? "" : receiveApply.getEmailAdr().split("@")[0])
-                .emailAdr2(receiveApply.getEmailAdr() == null  ? "" : receiveApply.getEmailAdr().split("@")[1])
+                .emailAdr1(receiveApply.getEmailAdr() == null || receiveApply.getEmailAdr().isEmpty() ? "" : receiveApply.getEmailAdr().split("@")[0])
+                .emailAdr2(receiveApply.getEmailAdr() == null || receiveApply.getEmailAdr().isEmpty() ? "" : receiveApply.getEmailAdr().split("@")[1])
                 .crdNo(receiveApply.getCrdNo())
                 .impsbCd(receiveApply.getImpsbCd())
-                .impsbCdNm(receiveApply.getImpsbCd() == null  ? "정상 등록" : "불능 - " + codeNm)
+                .impsbCdNm(receiveApply.getImpsbCd() == null || receiveApply.getImpsbCd().isEmpty() ? "정상 등록" : "불능 - " + codeNm)
                 .build();
     }
 }

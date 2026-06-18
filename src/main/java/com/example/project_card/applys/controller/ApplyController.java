@@ -1,6 +1,5 @@
 package com.example.project_card.applys.controller;
 
-import com.example.project_card.applys.dto.request.ReceiveApplyDetailDTO;
 import com.example.project_card.comCodes.service.ComCodeService;
 import com.example.project_card.applys.dto.request.ReceiveApplyDTO;
 import com.example.project_card.applys.service.ApplyService;
