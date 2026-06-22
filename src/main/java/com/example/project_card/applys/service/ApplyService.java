@@ -98,13 +98,14 @@ public class ApplyService {
         /* 당일 가입신청 검증 */
         if(comCodeDtl.getCodeNm().equals("최초신규") || comCodeDtl.getCodeNm().equals("추가신규"))
         {
-            receiveApply = receiveApplyRepository.findBySsnAndRcvDAndImpsbClas(ssn, String.valueOf(receiveApplyDTO.rcvD()), "");
-            if(receiveApply != null) // 불능코드 01 (당일신청내역 존재)
-                return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "01");
+            ReceiveApply PsbReceiveApply = receiveApplyRepository.findBySsnAndRcvDAndImpsbClas(ssn, String.valueOf(receiveApplyDTO.rcvD()), "");
+            if(PsbReceiveApply != null) // 불능코드 01 (당일신청내역 존재)
+                return UpdateReceiveApply(PsbReceiveApply, applClasCodeNm, receiveApplyDTO, "1", "01");
         }
 
         /* 결제계좌 검증 */
-        if(!ValidStlAct(receiveApplyDTO.stlAct())) // 불능코드 02 (결제계좌 오류)
+        if((receiveApplyDTO.stlAct() != null && !receiveApplyDTO.stlAct().equals(""))
+                && !ValidStlAct(receiveApplyDTO.stlAct())) // 불능코드 02 (결제계좌 오류)
             return UpdateReceiveApply(receiveApply, applClasCodeNm, receiveApplyDTO, "1", "02");
 
         /* 비밀번호 검증 */
@@ -162,13 +163,14 @@ public class ApplyService {
         /* 당일 가입신청 검증 */
         if(comCodeDtl.getCodeNm().equals("최초신규") || comCodeDtl.getCodeNm().equals("추가신규"))
         {
-            ReceiveApply receiveApply = receiveApplyRepository.findBySsnAndRcvDAndImpsbClas(ssn, String.valueOf(receiveApplyDTO.rcvD()), "");
-            if(receiveApply != null) // 불능코드 01 (당일신청내역 존재)
+            ReceiveApply PsbReceiveApply = receiveApplyRepository.findBySsnAndRcvDAndImpsbClas(ssn, String.valueOf(receiveApplyDTO.rcvD()), "");
+            if(PsbReceiveApply != null) // 불능코드 01 (당일신청내역 존재)
                 return SaveReceiveApply(ssn, applClasCodeNm, receiveApplyDTO, "1", "01");
         }
 
         /* 결제계좌 검증 */
-        if(!ValidStlAct(receiveApplyDTO.stlAct())) // 불능코드 02 (결제계좌 오류)
+        if((receiveApplyDTO.stlAct() != null && !receiveApplyDTO.stlAct().equals(""))
+                && !ValidStlAct(receiveApplyDTO.stlAct())) // 불능코드 02 (결제계좌 오류)
             return SaveReceiveApply(ssn, applClasCodeNm, receiveApplyDTO, "1", "02");
 
         /* 비밀번호 검증 */
