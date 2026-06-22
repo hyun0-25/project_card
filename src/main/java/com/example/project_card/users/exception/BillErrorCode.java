@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum CustomerErrorCode implements ErrorCode {
-    CUSTOMER_NOT_FOUND(HttpStatus.NOT_FOUND, "CUSTOMER_001", "고객 정보가 존재하지 않습니다")
+public enum BillErrorCode implements ErrorCode {
+    BILL_NOT_FOUND(HttpStatus.NOT_FOUND, "BILL_001", "결제 정보가 존재하지 않습니다")
     ;
 
     private final HttpStatus status;

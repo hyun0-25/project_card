@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
     <title>기간별 입회신청 내역조회</title>
     <style>
         .list{
@@ -57,36 +56,39 @@
 <body>
     <h2>기간별 입회신청 내역조회</h2>
     <div class="modal">
-        <!-- <form th:action="@{/board/list}" method="get"> -->
-        <form id="listForm">
+        <form id="listForm" th:action="@{/apply/list}" method="get">
             <div class="list">
                 <div class="container">
                     <div class="form-group">
                         <label>기간</label>
-                        <input type="date" id="applD1" name="applD1">
+                        <input type="date" id="rcvD1" name="rcvD1" th:value="${rcvD1}" onchange="dateChanged()" th:max="${today}">
                         ~ 
-                        <input type="date" id="applD2" name="applD2">
+                        <input type="date" id="rcvD2" name="rcvD2" th:value="${rcvD2}" th:max="${today}">
                     </div>
                     <div class="form-group">
                         <label>신청구분</label>
-                        <select class="apply-class-select" id="applClas" name="applClas">
-                            <option value="">선택</option>
-                            <!-- <option th:each=""></option> -->
+                        <select class="apply-class-select" id="applClas" name="applClas" th:field="${applClas}" th:value="${applClas}">
+                            <option value=""  selected>선택</option>
+                            <option th:each="c : ${C007}"
+                                    th:value="${c.code}"
+                                    th:text="${c.codeNm}"
+                            ></option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label>주민번호</label>
-                        <input type="hidden" id="ssn" name="ssn">
                         <input type="text" id="ssn1" name="ssn1" style="width: 100px;" maxlength="6"
+                               th:value="${ssn1}"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                         >
                         -
                         <input type="text" id="ssn2" name="ssn2" style="width: 100px;" maxlength="7"
+                               th:value="${ssn2}"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                         >
                     </div>
                     <div>
-                        <button type="button" onclick="checkSsn()">조회</button>
+                        <button type="submit" onclick="return validateForm()">조회</button>
                     </div>
                 </div>
             </div>
@@ -110,17 +112,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="">
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
+                    <tr th:each="receiveApply, stat : ${receiveApplyList}">
+                        <td th:text="${receiveApply.rcvD}"> </td>
+                        <td th:text="${receiveApply.rcvSeqNo}"> </td>
+                        <td th:text="${receiveApply.ssn}"> </td>
+                        <td th:text="${receiveApply.hgNm}"> </td>
+                        <td th:text="${receiveApply.engNm}"> </td>
+                        <td th:text="${receiveApply.applClas}"> </td>
+                        <td th:text="${receiveApply.brd}"> </td>
+                        <td th:text="${receiveApply.hdpNo}"> </td>
+                        <td th:text="${receiveApply.impsbClas}"> </td>
+                        <td th:text="${receiveApply.impsbCd}"> </td>
                     </tr>
                 </tbody>
             </table>
@@ -134,8 +136,76 @@
     </div>
 </body>
 <script>
+    function dateChanged() {
+        const rcvD1 = document.getElementById('rcvD1');
+        const rcvD2 = document.getElementById('rcvD2');
+
+        rcvD2.min = rcvD1.value;
+    }
+
+
     function resetForm() {
-        document.getElementById('listForm').reset();
+        const form = document.getElementById('listForm');
+        form.querySelectorAll('input').forEach(input => {
+            if (input.type !== 'button' && input.type !== 'submit') {
+                input.value = '';
+            }
+        });
+
+        form.querySelectorAll('select').forEach(select => {
+            select.selectedIndex = 0;
+        });
+    }
+
+    function validateSsn() {
+        let ssn1 = document.getElementById('ssn1');
+        let ssn2 = document.getElementById('ssn2');
+
+        const checkDigit = [2,3,4,5,6,7,8,9,2,3,4,5];
+
+        let ssn1V = ssn1.value;
+        let ssn2V = ssn2.value;
+
+        if(!ssn1V && !ssn2V)
+            return true;
+
+        let sum = 0;
+        for(let i = 0; i < ssn1V.length; i++){
+            sum = sum + (ssn1V[i] * checkDigit[i]);
+        }
+        for(let i = 0; i < ssn2V.length-1; i++){
+            sum = sum + (ssn2V[i] * checkDigit[i+6]);
+        }
+
+        sum = sum % 11; // 11로 나눈 나머지
+        sum = 11 - sum; // 나머지를 11에서 뺌
+
+        if(ssn2V[6] == sum){
+            ssn1.readonly = true;
+            ssn2.readonly = true;
+            return true;
+        }
+        else{
+            alert('올바른 주민번호를 입력하여 주십시요.');
+            return false;
+        }
+    }
+
+    function validateRcvD() {
+        const rcvD1 = document.getElementById('rcvD1').value;
+        const rcvD2 = document.getElementById('rcvD2').value;
+        if (!rcvD1 || rcvD1 === "" || !rcvD2 || rcvD2 === "") {
+            alert('조회 기간을 정확히 입력해주세요.');
+            return false;
+        }
+        return true;
+    }
+
+    function validateForm() {
+        if(!validateRcvD() || !validateSsn())
+        {
+            return false;
+        }
     }
 </script>
 </html>

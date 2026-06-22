@@ -1,5 +1,6 @@
 package com.example.project_card.applys.controller;
 
+import com.example.project_card.applys.dto.response.ReceiveApplyElementDTO;
 import com.example.project_card.comCodes.service.ComCodeService;
 import com.example.project_card.applys.dto.request.ReceiveApplyDTO;
 import com.example.project_card.applys.service.ApplyService;
@@ -7,10 +8,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Slf4j
 @Controller
@@ -87,5 +88,27 @@ public class ApplyController {
         model.addAttribute("C007", comCodeService.SelectCommonCodeDetail("C007"));
         model.addAttribute("C008", comCodeService.SelectCommonCodeDetail("C008"));
         model.addAttribute("C009", comCodeService.SelectCommonCodeDetail("C009"));
+    }
+
+    @GetMapping("/list")
+    public String SelectReceiveApplyList(
+            @RequestParam(required = false) String rcvD1,
+            @RequestParam(required = false) String rcvD2,
+            @RequestParam(required = false) String applClas,
+            @RequestParam(required = false) String ssn1,
+            @RequestParam(required = false) String ssn2,
+            Model model
+    )
+    {
+        List<ReceiveApplyElementDTO> receiveApplyList = applyService.SelectReceiveApplyList(rcvD1, rcvD2, applClas, ssn1, ssn2);
+        model.addAttribute("C007", comCodeService.SelectCommonCodeDetail("C007"));
+        model.addAttribute("receiveApplyList", receiveApplyList);
+        model.addAttribute("today", LocalDate.now());
+        model.addAttribute("rcvD1", rcvD1);
+        model.addAttribute("rcvD2", rcvD2);
+        model.addAttribute("applClas", applClas != null && !applClas.equals("") ? applClas : "");
+        model.addAttribute("ssn1", ssn1);
+        model.addAttribute("ssn2", ssn2);
+        return "apply/list";
     }
 }

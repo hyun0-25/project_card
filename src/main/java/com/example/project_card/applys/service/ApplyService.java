@@ -4,6 +4,7 @@ import com.example.project_card.applys.domain.NoSeq;
 import com.example.project_card.applys.domain.ReceiveApply;
 import com.example.project_card.applys.domain.SeqNo;
 import com.example.project_card.applys.dto.request.ReceiveApplyDTO;
+import com.example.project_card.applys.dto.response.ReceiveApplyElementDTO;
 import com.example.project_card.applys.exception.ReceiveApplyErrorCode;
 import com.example.project_card.applys.exception.BillErrorCode;
 import com.example.project_card.applys.repository.NoSeqRepository;
@@ -28,6 +29,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -42,6 +45,40 @@ public class ApplyService {
     private final SeqNoRepository seqNoRepository;
     private final CustomerRepository customerRepository;
     private final BillRepository billRepository;
+
+    public List<ReceiveApplyElementDTO> SelectReceiveApplyList(String rcvD1, String rcvD2, String applClas, String ssn1, String ssn2)
+    {
+        log.info("{ ApplyService } : SelectReceiveApplyList 조회");
+        log.info(" >> rcvD1 - "+rcvD1);
+        log.info(" >> rcvD2 - "+rcvD2);
+        log.info(" >> applClas - "+applClas);
+        log.info(" >> ssn1 - "+ssn1);
+        log.info(" >> ssn2 - "+ssn2);
+
+        String ssn = "";
+        if(ssn1 != null && !ssn1.equals(""))
+            ssn = ssn1 + "-" + ssn2;
+        log.info(" >> ssn - "+ssn);
+        List<ReceiveApply> receiveApplyList = receiveApplyRepository.findAllByRcvD1AndRcvD2AndApplClasAndSsnOrderByRcvD(rcvD1, rcvD2, applClas, ssn);
+        log.info("size = "+receiveApplyList.size());
+        List<ReceiveApplyElementDTO> receiveApplyElementDTOList = new ArrayList<>();
+        for(ReceiveApply receiveApply: receiveApplyList)
+        {
+            ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C007", receiveApply.getApplClas());
+            String applClasNm = comCodeDtl.getCodeNm();
+
+            String codeNm = "";
+            if(receiveApply.getImpsbClas() != null && receiveApply.getImpsbClas().equals("1"))
+            {
+                comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C001", receiveApply.getImpsbCd());
+                codeNm = comCodeDtl.getCodeNm();
+            }
+            receiveApplyElementDTOList.add(ReceiveApplyElementDTO.fromReceiveApplyElement(receiveApply, applClasNm, codeNm));
+        }
+
+        log.info("{ ApplyService } : SelectReceiveApplyList 조회 완료");
+        return receiveApplyElementDTOList;
+    }
 
     public ReceiveApplyDTO ReceiveApplyModify(ReceiveApplyDTO receiveApplyDTO)
     {
