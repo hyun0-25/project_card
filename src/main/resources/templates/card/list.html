@@ -165,7 +165,11 @@
                 </thead>
                 <tbody>
                     <tr th:each="cardElementDTO, stat : ${cardListDTO.cardElementDTOList}">
-                        <td th:text="${cardElementDTO.crdNo}"></td>
+                        <td>
+                            <a th:href="@{/card/detail(ssn1=${cardListDTO.ssn1}, ssn2=${cardListDTO.ssn2}, crdNo=${cardElementDTO.crdNo})}"
+                               th:text="${cardElementDTO.crdNo}">
+                            </a>
+                        </td>
                         <td th:text="${cardElementDTO.engNm}"></td>
                         <td th:text="${cardElementDTO.vldDur}"></td>
                         <td th:text="${cardElementDTO.brd}"></td>

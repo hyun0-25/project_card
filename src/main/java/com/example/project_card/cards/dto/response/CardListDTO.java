@@ -11,6 +11,7 @@ public record CardListDTO(
         String ssn1,
         String ssn2,
         String crdNo,
+        String custNo,
         String hgNm,
         String hdpNo,
         String regD,
@@ -27,7 +28,7 @@ public record CardListDTO(
 ) {
     public static CardListDTO EmptyCardListDTO(String ssn1, String ssn2, String crdNo)
     {
-        return new CardListDTO(ssn1, ssn2, crdNo, "", "", "", "", "", "", "", "", "", "", "", "", null);
+        return new CardListDTO(ssn1, ssn2, crdNo, "", "", "", "", "", "", "", "", "", "", "", "", "", null);
     }
 
     public static CardListDTO fromCardList(String ssn1, String ssn2, String crdNo, Customer customer, Bill bill, List<CardElementDTO> cardElementDTOList)
@@ -36,6 +37,7 @@ public record CardListDTO(
                 .ssn1(ssn1)
                 .ssn2(ssn2)
                 .crdNo(crdNo)
+                .custNo(customer.getCustNo())
                 .hgNm(customer.getHgNm())
                 .hdpNo(customer.getHdpNo())
                 .regD(customer.getRegD())

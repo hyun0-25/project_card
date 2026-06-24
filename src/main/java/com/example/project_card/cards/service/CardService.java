@@ -1,6 +1,7 @@
 package com.example.project_card.cards.service;
 
 import com.example.project_card.cards.domain.Card;
+import com.example.project_card.cards.dto.response.CardDetailDTO;
 import com.example.project_card.cards.dto.response.CardElementDTO;
 import com.example.project_card.cards.dto.response.CardListDTO;
 import com.example.project_card.cards.exception.CardErrorCode;
@@ -56,5 +57,23 @@ public class CardService {
         return cardListDTO;
     }
 
+    public CardDetailDTO SelectCardDetail(String ssn1, String ssn2, String crdNo)
+    {
+        log.info("{ CardService } : SelectCardDetail 조회");
+        log.info(" >> ssn1 - "+ssn1);
+        log.info(" >> ssn2 - "+ssn2);
+        log.info(" >> crdNo - "+crdNo);
+        String ssn = ssn1 + "-" + ssn2;
+        Customer customer = customerRepository.findBySsn(ssn);
+        if(customer == null)
+            throw BaseException.type(CustomerErrorCode.CUSTOMER_NOT_FOUND);
 
+        Card card = cardRepository.findByCrdNoAndCustNo(crdNo, customer.getCustNo());
+        if(card == null)
+            throw BaseException.type(CardErrorCode.CARD_NOT_FOUND);
+
+        CardDetailDTO cardDetailDTO = CardDetailDTO.fromCardDetail(ssn1, ssn2, crdNo, customer, card);
+        log.info("{ CardService } : SelectCardDetail 조회");
+        return cardDetailDTO;
+    }
 }

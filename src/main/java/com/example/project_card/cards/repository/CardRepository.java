@@ -20,4 +20,6 @@ public interface CardRepository extends JpaRepository<Card, CardId> {
             "WHERE c.ssn = :ssn " +
             "AND (:crdNo IS NULL OR :crdNo = '' OR c.crdNo = :crdNo)")
     List<Card> findAllBySsnAndCrdNo(String ssn, String crdNo);
+
+    Card findByCrdNoAndCustNo(String crdNo, String custNo);
 }

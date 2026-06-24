@@ -53,90 +53,99 @@
 <body>
     <h2>카드 상세 내역조회</h2>
     <div class="modal">
-        <!-- <form th:action="@{/board/list}" method="get"> -->
-        <form id="detailForm">
+        <form id="detailForm" th:action="@{/card/detail}" method="get">
             <div class="list">
                 <div class="container">
                     <div class="form-group">
                         <label>주민번호</label>
-                        <input type="hidden" id="ssn" name="ssn">
                         <input type="text" id="ssn1" name="ssn1" style="width: 120px;" maxlength="6"
+                               th:value="${cardDetailDTO.ssn1}"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                         >
                         -
                         <input type="text" id="ssn2" name="ssn2" style="width: 120px;" maxlength="7"
+                               th:value="${cardDetailDTO.ssn2}"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                         >
                     </div>
                     <div class="form-group">
                         <label>카드번호</label>
                         <input type="text" id="crdNo" name="crdNo" style="width: 250px;" maxlength="16"
+                               th:value="${cardDetailDTO.crdNo}"
                             oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                         >
                     </div>
                     <div>
-                        <button type="button" onclick="checkSsn()">조회</button>
+                        <button type="submit" onclick="return validateForm()">조회</button>
                     </div>
                 </div>
+                <script th:inline="javascript">
+                    /*<![CDATA[*/
+                    var msg = /*[[${message}]]*/ null;
+
+                    if (msg != null && msg.trim() !== "") {
+                        alert(msg);
+                    }
+                    /*]]>*/
+                </script>
             </div>
             <hr>
-        </form>
         <div style="padding: 0 10px;">조회 결과</div>
         <div style="height: auto; border: 1px solid #ccc; padding: 10px">
             <div class="container">
                 <div class="form-group">
                     <label>성명(한글)</label>
-                    <input type="text" id="hgNm" name="hgNm" disabled>
+                    <input type="text" id="hgNm" name="hgNm" th:value="${cardDetailDTO.hgNm}" disabled>
                 </div>
                 <div class="form-group">
                     <label>성명(영문)</label>
-                    <input type="text" id="engNm" name="engNm" disabled>
+                    <input type="text" id="engNm" name="engNm" th:value="${cardDetailDTO.engNm}"disabled>
                 </div>
             </div>
             <div class="container">
                 <div class="form-group">
                     <label>등록일자</label>
-                    <input type="text" id="regD" name="regD" disabled>
+                    <input type="text" id="regD" name="regD" th:value="${cardDetailDTO.regD}" disabled>
                 </div>
                 <div class="form-group">
                     <label>유효기간</label>
-                    <input type="text" id="stlMtd" name="stlMtd" disabled>
+                    <input type="text" id="vldDur" name="vldDur" th:value="${cardDetailDTO.vldDur}" disabled>
                 </div>
             </div>
             <div class="container">
                 <div class="form-group">
                     <label>브랜드</label>
-                    <input type="text" id="stlDd" name="stlDd" disabled>
+                    <input type="text" id="brd" name="brd" th:value="${cardDetailDTO.brd}" disabled>
                 </div>
                 <div class="form-group">
                     <label>카드 등급</label>
-                    <input type="text" id="stmtSndMtd" name="stmtSndMtd" disabled>
+                    <input type="text" id="crdGrd" name="crdGrd" th:value="${cardDetailDTO.crdGrd}" disabled>
                 </div>
             </div>
             <div class="container">
                 <div class="form-group">
                     <label>전 카드번호</label>
-                    <input type="text" id="stlDd" name="stlDd" disabled>
+                    <input type="text" id="bfCrdNo" name="bfCrdNo" th:value="${cardDetailDTO.bfCrdNo}" disabled>
                 </div>
                 <div class="form-group">
                     <label>고객번호</label>
-                    <input type="text" id="stmtSndMtd" name="stmtSndMtd" disabled>
+                    <input type="text" id="custNo" name="custNo" th:value="${cardDetailDTO.custNo}" disabled>
                 </div>
             </div>
             <div class="container">
                 <div class="form-group">
                     <label>관리 영업점</label>
-                    <input type="text" id="stlDd" name="stlDd" disabled>
+                    <input type="text" id="mgtBbrn" name="mgtBbrn" th:value="${cardDetailDTO.mgtBbrn}" disabled>
                 </div>
                 <div class="form-group">
                     <label>최종 카드여부</label>
-                    <input type="text" id="stmtSndMtd" name="stmtSndMtd" disabled>
+                    <input type="text" id="lstCrdF" name="lstCrdF" th:value="${cardDetailDTO.lstCrdF}" disabled>
                 </div>
             </div>
             <div class="container">
                 <div class="form-group">
                     <label>최종 등록일자</label>
-                    <input type="text" id="stlDd" name="stlDd" disabled>
+                    <input type="text" id="fstRegD" name="fstRegD" th:value="${cardDetailDTO.fstRegD}" disabled>
                 </div>
             </div>
         </div>
@@ -145,11 +154,69 @@
                 <button type="button" onclick="resetForm()">초기화</button>
             </div>
         </div>
+        </form>
     </div>
 </body>
 <script>
     function resetForm() {
-        document.getElementById('detailForm').reset();
+        const form = document.getElementById('detailForm');
+        form.querySelectorAll('input').forEach(input => {
+            if (input.type !== 'button' && input.type !== 'submit') {
+                input.value = '';
+            }
+        });
+    }
+
+    function validateSsn() {
+        let ssn1 = document.getElementById('ssn1');
+        let ssn2 = document.getElementById('ssn2');
+
+        const checkDigit = [2,3,4,5,6,7,8,9,2,3,4,5];
+
+        let ssn1V = ssn1.value;
+        let ssn2V = ssn2.value;
+
+        let sum = 0;
+        for(let i = 0; i < ssn1V.length; i++){
+            sum = sum + (ssn1V[i] * checkDigit[i]);
+        }
+        for(let i = 0; i < ssn2V.length-1; i++){
+            sum = sum + (ssn2V[i] * checkDigit[i+6]);
+        }
+
+        sum = sum % 11; // 11로 나눈 나머지
+        sum = 11 - sum; // 나머지를 11에서 뺌
+
+        if(ssn2V[6] == sum){
+            ssn1.readonly = true;
+            ssn2.readonly = true;
+            return true;
+        }
+        else{
+            alert('올바른 주민번호를 입력하여 주십시요.');
+            return false;
+        }
+    }
+
+    function validateCrdNo() {
+        const crdNo = document.getElementById('crdNo').value;
+        if(crdNo){
+            if(crdNo.length < 16){
+                alert("카드번호 16자리를 입력해주세요.");
+                return false
+            }
+            return true;
+        }
+        else{
+            return true;
+        }
+    }
+
+    function validateForm() {
+        if(!validateSsn() || !validateCrdNo())
+        {
+            return false;
+        }
     }
 </script>
 </html>
