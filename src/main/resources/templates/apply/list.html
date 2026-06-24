@@ -114,7 +114,11 @@
                 <tbody>
                     <tr th:each="receiveApply, stat : ${receiveApplyList}">
                         <td th:text="${receiveApply.rcvD}"> </td>
-                        <td th:text="${receiveApply.rcvSeqNo}"> </td>
+                        <td>
+                            <a th:href="@{/apply/detail(ssn1=${receiveApply.ssn.split('-')[0]}, ssn2=${receiveApply.ssn.split('-')[1]}, rcvD=${receiveApply.rcvD}, rcvSeqNo=${receiveApply.rcvSeqNo})}"
+                               th:text="${receiveApply.rcvSeqNo}">
+                            </a>
+                        </td>
                         <td th:text="${receiveApply.ssn}"> </td>
                         <td th:text="${receiveApply.hgNm}"> </td>
                         <td th:text="${receiveApply.engNm}"> </td>

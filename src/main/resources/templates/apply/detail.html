@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-    <title>회원 입회신청 작성</title>
+    <title>회원 입회 신청 상세 내역조회</title>
     <style>
         .register{
-            background-color: rgb(231, 249, 255);
+            background-color: rgb(192, 238, 255);
         }
         .modal{
             width: 800px;
@@ -50,230 +50,231 @@
 </head>
 <div th:replace="~{fragments/navbar :: globalNavbar}"></div>
 <body>
-    <h2>회원 입회신청 작성</h2>
-    <div class="modal">
-        <form id="applyForm" th:action="@{/apply/register}" method="post">
-            <div class="register">
-                <div class="container">
-                    <div class="form-group">
-                        <label>주민번호</label>
-                        <input type="text" id="ssn1" name="ssn1" style="width: 70px;" maxlength="6"
-                               th:value="${receiveApplyDTO.ssn1}"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                        >
-                        -
-                        <input type="text" id="ssn2" name="ssn2" style="width: 70px;" maxlength="7"
-                               th:value="${receiveApplyDTO.ssn2}"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                        >
-                    </div>
-                    <div class="form-group">
-                        <label>접수일자</label>
-                        <input type="date" id="rcvD" name="rcvD" th:value="${receiveApplyDTO.rcvD}" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label>접수 일련번호</label>
-                        <input type="text" id="rcvSeqNo" name="rcvSeqNo" th:value="${receiveApplyDTO.rcvSeqNo}" readonly>
-                    </div>
-<!--                    <div>-->
-<!--                        <button type="submit" th:formaction="@{/apply/detail}" formmethod="get" onclick="return checkSsn()">조회</button>-->
-<!--                    </div>-->
+<h2>회원 입회 신청 상세 내역조회</h2>
+<div class="modal">
+    <form id="applyForm" th:action="@{/apply/register}" method="post">
+        <div class="register">
+            <div class="container">
+                <div class="form-group">
+                    <label>주민번호</label>
+                    <input type="text" id="ssn1" name="ssn1" style="width: 70px;" maxlength="6"
+                           th:value="${receiveApplyDTO.ssn1}"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                    >
+                    -
+                    <input type="text" id="ssn2" name="ssn2" style="width: 70px;" maxlength="7"
+                           th:value="${receiveApplyDTO.ssn2}"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                    >
                 </div>
-                <script th:inline="javascript">
-                    /*<![CDATA[*/
-                    var msg = /*[[${message}]]*/ null;
+                <div class="form-group">
+                    <label>접수일자</label>
+                    <input type="date" id="rcvD" name="rcvD" th:value="${receiveApplyDTO.rcvD}">
+                </div>
+                <div class="form-group">
+                    <label>접수 일련번호</label>
+                    <input type="text" id="rcvSeqNo" name="rcvSeqNo" th:value="${receiveApplyDTO.rcvSeqNo}" >
+                </div>
+                <div>
+                    <button type="submit" th:formaction="@{/apply/detail}" formmethod="get" onclick="return checkSsn()">조회</button>
+                </div>
+            </div>
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+                var msg = /*[[${message}]]*/ null;
 
-                    if (msg != null && msg.trim() !== "") {
-                        alert(msg);
-                    }
-                    /*]]>*/
-                </script>
+                if (msg != null && msg.trim() !== "") {
+                    alert(msg);
+                }
+                /*]]>*/
+            </script>
 
-                <hr>
+            <hr>
 
-                <div class="container">
-                    <div class="form-group">
-                        <label>신청일자</label>
-                        <input type="date" id="applD" name="applD" th:value="${receiveApplyDTO.applD}">
-                    </div>
-                    <div class="form-group">
-                        <label>신청구분</label>
-                        <select class="apply-class-select" id="applClas" name="applClas" th:field="${receiveApplyDTO.applClas}" th:value="${receiveApplyDTO.applClas}">
-                            <option value=""  selected>선택</option>
-                             <option th:each="c : ${C007}"
-                                     th:value="${c.code}"
-                                     th:text="${c.codeNm}"
-                             ></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>브랜드</label>
-                        <select class="apply-brand-select" id="brd" name="brd" th:field="${receiveApplyDTO.brd}" th:value="${receiveApplyDTO.brd}">
-                            <option value=""  selected>선택</option>
-                            <option th:each="c : ${C004}"
-                                    th:value="${c.code}"
-                                    th:text="${c.codeNm}"
-                            ></option>
-                        </select>
-                    </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>신청일자</label>
+                    <input type="date" id="applD" name="applD" th:value="${receiveApplyDTO.applD}">
                 </div>
-                <div class="container">
-                    <div class="form-group">
-                        <label>성명(한글)</label>
-                        <input type="text" id="hgNm" name="hgNm"
-                               th:value="${receiveApplyDTO.hgNm}"
-                            oninput="this.value = this.value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣ\s]/g, '');"
-                        >
-                    </div>
-                    <div class="form-group">
-                        <label>성명(영문)</label>
-                        <input type="text" id="engNm" name="engNm"
-                               th:value="${receiveApplyDTO.engNm}"
-                            oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"
-                        >
-                    </div>
-                    <div class="form-group">
-                        <label>생년월일</label>
-                        <input type="text" id="birthD" name="birthD"
-                               th:value="${receiveApplyDTO.birthD}"
-                            maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                        >
-                        <div>
-                            <span id="birthDMatchMessage"></span>
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>신청구분</label>
+                    <select class="apply-class-select" id="applClas" name="applClas" th:field="${receiveApplyDTO.applClas}" th:value="${receiveApplyDTO.applClas}">
+                        <option value=""  selected>선택</option>
+                        <option th:each="c : ${C007}"
+                                th:value="${c.code}"
+                                th:text="${c.codeNm}"
+                        ></option>
+                    </select>
                 </div>
-                <div class="container">
-                    <div class="form-group">
-                        <label>결제일자</label>
-                        <select class="bill-date-select" id="stlDd" name="stlDd" th:field="${receiveApplyDTO.stlDd}" th:value="${receiveApplyDTO.stlDd}">
-                            <option value=""  selected>선택</option>
-                            <option th:each="c : ${C009}"
-                                    th:value="${c.code}"
-                                    th:text="${c.codeNm}"
-                            ></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>결제방법</label>
-                        <select class="bill-method-select" id="stlMtd" name="stlMtd" th:field="${receiveApplyDTO.stlMtd}" th:value="${receiveApplyDTO.stlMtd}">
-                            <option value=""  selected>선택</option>
-                            <option th:each="c : ${C002}"
-                                    th:value="${c.code}"
-                                    th:text="${c.codeNm}"
-                            ></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>결제은행</label>
-                        <select class="bill-bank-select" id="bnkCd" name="bnkCd" th:field="${receiveApplyDTO.bnkCd}" th:value="${receiveApplyDTO.bnkCd}">
-                            <option value=""  selected>선택</option>
-                            <option th:each="c : ${C003}"
-                                    th:value="${c.code}"
-                                    th:text="${c.codeNm}"
-                            ></option>
-                        </select>
-                    </div>
+                <div class="form-group">
+                    <label>브랜드</label>
+                    <select class="apply-brand-select" id="brd" name="brd" th:field="${receiveApplyDTO.brd}" th:value="${receiveApplyDTO.brd}">
+                        <option value=""  selected>선택</option>
+                        <option th:each="c : ${C004}"
+                                th:value="${c.code}"
+                                th:text="${c.codeNm}"
+                        ></option>
+                    </select>
                 </div>
-                <div class="container">
-                    <div class="form-group">
-                        <label>결제계좌</label>
-                        <input type="text" id="stlAct" name="stlAct" style="width: 200px;"
-                               th:value="${receiveApplyDTO.stlAct}"
-                            pattern="[0-9-]*" oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
-                        >
-                        <button type="button" onclick="checkStlAct()">인증</button>
-                    </div>
-                    <div class="form-group">
-                        <label>결제계좌 확인여부</label>
-                        <input type="hidden" id="prcsClas" name="prcsClas" th:value="${receiveApplyDTO.prcsClas}" style="width: 200px;" >
-                        <input type="text" id="prcsClasValid" name="prcsClasValid" th:value="${receiveApplyDTO.prcsClas == '1'} ? '인증 완료' : ''" style="width: 200px;" disabled>
-                    </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>성명(한글)</label>
+                    <input type="text" id="hgNm" name="hgNm"
+                           th:value="${receiveApplyDTO.hgNm}"
+                           oninput="this.value = this.value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣ\s]/g, '');"
+                    >
                 </div>
-                <div class="container">
-                    <div class="form-group">
-                        <label>청구서 발송방법</label>
-                        <select class="bill-send-method-select" id="stmtSndMtd" name="stmtSndMtd" th:field="${receiveApplyDTO.stmtSndMtd}" th:value="${receiveApplyDTO.stmtSndMtd}">
-                            <option value=""  selected>선택</option>
-                            <option th:each="c : ${C006}"
-                                    th:value="${c.code}"
-                                    th:text="${c.codeNm}"
-                            ></option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <div>
-                            <label>우편번호</label>
-                            <input type="text" id="billZip" name="billZip" th:value="${receiveApplyDTO.billZip}" style="width: 70px;" readonly>
-                            <button type="button" onclick="PostCode()">...</button>
-                            <input type="text" id="billAdr1" name="billAdr1" th:value="${receiveApplyDTO.billAdr1}" style="width: 270px; margin-left: 10px;" readonly>
-                        </div>
-                        <div>
-                            <label>상세주소</label>
-                            <input type="text" id="billAdr2" name="billAdr2" th:value="${receiveApplyDTO.billAdr2}" style="width: 400px;">
-                        </div>
-                    </div>
+                <div class="form-group">
+                    <label>성명(영문)</label>
+                    <input type="text" id="engNm" name="engNm"
+                           th:value="${receiveApplyDTO.engNm}"
+                           oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')"
+                    >
                 </div>
-                <div class="container">
-                    <div class="form-group">
-                        <label>이메일</label>
-                        <input type="text" id="emailAdr1" name="emailAdr1" th:value="${receiveApplyDTO.emailAdr1}" minlength="4" style="width: 100px;"
-                            oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');"
-                        >
-                        @
-                        <input type="text" id="emailAdr2" name="emailAdr2" th:value="${receiveApplyDTO.emailAdr2}" minlength="4" style="width: 80px;"
-                            oninput="this.value = this.value.replace(/[^a-zA-Z0-9.]/g, '');"
-                        >
-                        <select class="domain-select"  id="userEmailDomain" name="userEmailDomain" onchange="domainSelect()">
-                            <option value=""  selected>선택</option>
-                            <option value="naver.com">naver.com</option>
-                            <option value="gmail.com">gmail.com</option>
-                            <option value="daum.net">daum.net</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>핸드폰 번호</label>
-                        <input type="text" id="hdpNo" name="hdpNo" th:value="${receiveApplyDTO.hdpNo}" style="width: 100px;" maxlength="13"
-                            oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
-                        >
-                        <div>
-                            <span id="hdpNoMatchMessage"></span>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label>비밀번호</label>
-                        <input type="text" id="scrtNo" name="scrtNo" th:value="${receiveApplyDTO.scrtNo}" style="width: 100px;" maxlength="6"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                        >
-                        <div>
-                            <span id="scrtNoMatchMessage"></span>
-                        </div>
-                    </div>
-                </div>
-                <div class="container">
-                    <div class="form-group">
-                        <label>불능 구분</label>
-                        <input type="text" id="impsbCd" name="impsbCd" th:value="${receiveApplyDTO.impsbCd}" style="width: 200px;" disabled>
-                    </div>
-                    <div class="form-group">
-                        <label>불능 사유명</label>
-                        <input type="text" id="impsbCdNm" name="impsbCdNm" th:value="${receiveApplyDTO.impsbCdNm}" style="width: 350px;" disabled>
-                    </div>
-                </div>
-                <div class="container">
-                    <div style="margin-left: auto;">
-                        <button type="submit" onclick="return validateForm()">등록</button>
-                        <button type="submit" th:formaction="@{/apply/update}" onclick="return validateModifyForm()">수정</button>
-                        <button type="button" onclick="resetForm()">초기화</button>
+                <div class="form-group">
+                    <label>생년월일</label>
+                    <input type="text" id="birthD" name="birthD"
+                           th:value="${receiveApplyDTO.birthD}"
+                           maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                    >
+                    <div>
+                        <span id="birthDMatchMessage"></span>
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>결제일자</label>
+                    <select class="bill-date-select" id="stlDd" name="stlDd" th:field="${receiveApplyDTO.stlDd}" th:value="${receiveApplyDTO.stlDd}">
+                        <option value=""  selected>선택</option>
+                        <option th:each="c : ${C009}"
+                                th:value="${c.code}"
+                                th:text="${c.codeNm}"
+                        ></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>결제방법</label>
+                    <select class="bill-method-select" id="stlMtd" name="stlMtd" th:field="${receiveApplyDTO.stlMtd}" th:value="${receiveApplyDTO.stlMtd}">
+                        <option value=""  selected>선택</option>
+                        <option th:each="c : ${C002}"
+                                th:value="${c.code}"
+                                th:text="${c.codeNm}"
+                        ></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>결제은행</label>
+                    <select class="bill-bank-select" id="bnkCd" name="bnkCd" th:field="${receiveApplyDTO.bnkCd}" th:value="${receiveApplyDTO.bnkCd}">
+                        <option value=""  selected>선택</option>
+                        <option th:each="c : ${C003}"
+                                th:value="${c.code}"
+                                th:text="${c.codeNm}"
+                        ></option>
+                    </select>
+                </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>결제계좌</label>
+                    <input type="text" id="stlAct" name="stlAct" style="width: 200px;"
+                           th:value="${receiveApplyDTO.stlAct}"
+                           pattern="[0-9-]*" oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+                    >
+                    <button type="button" onclick="checkStlAct()">인증</button>
+                </div>
+                <div class="form-group">
+                    <label>결제계좌 확인여부</label>
+                    <input type="hidden" id="prcsClas" name="prcsClas" th:value="${receiveApplyDTO.prcsClas}" style="width: 200px;" >
+                    <input type="text" id="prcsClasValid" name="prcsClasValid" th:value="${receiveApplyDTO.prcsClas == '1'} ? '인증 완료' : ''" style="width: 200px;" disabled>
+                </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>청구서 발송방법</label>
+                    <select class="bill-send-method-select" id="stmtSndMtd" name="stmtSndMtd" th:field="${receiveApplyDTO.stmtSndMtd}" th:value="${receiveApplyDTO.stmtSndMtd}">
+                        <option value=""  selected>선택</option>
+                        <option th:each="c : ${C006}"
+                                th:value="${c.code}"
+                                th:text="${c.codeNm}"
+                        ></option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <div>
+                        <label>우편번호</label>
+                        <input type="text" id="billZip" name="billZip" th:value="${receiveApplyDTO.billZip}" style="width: 70px;" readonly>
+                        <button type="button" onclick="PostCode()">...</button>
+                        <input type="text" id="billAdr1" name="billAdr1" th:value="${receiveApplyDTO.billAdr1}" style="width: 270px; margin-left: 10px;" readonly>
+                    </div>
+                    <div>
+                        <label>상세주소</label>
+                        <input type="text" id="billAdr2" name="billAdr2" th:value="${receiveApplyDTO.billAdr2}" style="width: 400px;">
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>이메일</label>
+                    <input type="text" id="emailAdr1" name="emailAdr1" th:value="${receiveApplyDTO.emailAdr1}" minlength="4" style="width: 100px;"
+                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');"
+                    >
+                    @
+                    <input type="text" id="emailAdr2" name="emailAdr2" th:value="${receiveApplyDTO.emailAdr2}" minlength="4" style="width: 80px;"
+                           oninput="this.value = this.value.replace(/[^a-zA-Z0-9.]/g, '');"
+                    >
+                    <select class="domain-select"  id="userEmailDomain" name="userEmailDomain" onchange="domainSelect()">
+                        <option value=""  selected>선택</option>
+                        <option value="naver.com">naver.com</option>
+                        <option value="gmail.com">gmail.com</option>
+                        <option value="daum.net">daum.net</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>핸드폰 번호</label>
+                    <input type="text" id="hdpNo" name="hdpNo" th:value="${receiveApplyDTO.hdpNo}" style="width: 100px;" maxlength="13"
+                           oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
+                    >
+                    <div>
+                        <span id="hdpNoMatchMessage"></span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>비밀번호</label>
+                    <input type="text" id="scrtNo" name="scrtNo" th:value="${receiveApplyDTO.scrtNo}" style="width: 100px;" maxlength="6"
+                           oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                    >
+                    <div>
+                        <span id="scrtNoMatchMessage"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="container">
+                <div class="form-group">
+                    <label>불능 구분</label>
+                    <input type="text" id="impsbCd" name="impsbCd" th:value="${receiveApplyDTO.impsbCd}" style="width: 200px;" disabled>
+                </div>
+                <div class="form-group">
+                    <label>불능 사유명</label>
+                    <input type="text" id="impsbCdNm" name="impsbCdNm" th:value="${receiveApplyDTO.impsbCdNm}" style="width: 350px;" disabled>
+                </div>
+            </div>
+            <div class="container">
+                <div style="margin-left: auto;">
+<!--                    <button type="submit" onclick="return validateForm()">등록</button>-->
+                    <button type="submit" th:formaction="@{/apply/update}" onclick="return validateModifyForm()">수정</button>
+                    <button type="button" onclick="resetForm()">초기화</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
 </body>
 <script>
     /* 신청일 최대 = 접수일 */
     document.getElementById('applD').max = document.getElementById('rcvD').value;
+    document.getElementById('rcvD').max = document.getElementById('rcvD').value;
 
     /* 우편번호 불러오기 */
     function PostCode() {
@@ -853,8 +854,11 @@
         funcScrtNoVerify();
 
         const impsbCd = document.getElementById('impsbCd').value;
-
-        if(!validateSsn()
+        if(!impsbCd || impsbCd == null) {
+            alert("이미 카드발급이 완료된 신청서입니다. 수정할 수 없습니다.");
+            return false;
+        }
+        else if(!validateSsn()
             || !validateApplD() || !validateApplClas() || !validateBrd()
             || !validateHgNm() || !validateEngNm() || !validateBirth()
             || !validateStlDd() || !validateStlMtd() || !validateBnkCd()

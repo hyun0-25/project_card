@@ -18,6 +18,6 @@ public interface ReceiveApplyRepository extends JpaRepository<ReceiveApply, Rece
             "WHERE r.rcvD >= :rcvD1 AND r.rcvD <= :rcvD2 " +
             "AND (:applClas IS NULL OR r.applClas = :applClas) " +
             "AND (:ssn IS NULL OR :ssn = '' OR r.ssn = :ssn) " +
-            "ORDER BY r.rcvD DESC")
-    List<ReceiveApply> findAllByRcvD1AndRcvD2AndApplClasAndSsnOrderByRcvD(String rcvD1, String rcvD2, String applClas, String ssn);
+            "ORDER BY r.rcvD DESC, CAST(r.rcvSeqNo AS INTEGER) DESC")
+    List<ReceiveApply> findAllByRcvD1AndRcvD2AndApplClasAndSsnOrderByRcvDDescAndRcvSeqNoDesc(String rcvD1, String rcvD2, String applClas, String ssn);
 }

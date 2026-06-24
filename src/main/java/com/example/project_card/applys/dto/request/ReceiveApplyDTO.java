@@ -34,9 +34,9 @@ public record ReceiveApplyDTO(
         String impsbCd,
         String impsbCdNm
 ) {
-    public static ReceiveApplyDTO EmptyReceiveApplyInfo(String ssn1, String ssn2)
+    public static ReceiveApplyDTO EmptyReceiveApplyInfo(String ssn1, String ssn2, LocalDate rcvD, String rcvSeqNo)
     {
-        return new ReceiveApplyDTO(ssn1, ssn2, LocalDate.now(), "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
+        return new ReceiveApplyDTO(ssn1, ssn2, rcvD, rcvSeqNo, "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "");
     }
 
     public static ReceiveApplyDTO fromReceiveApply(ReceiveApply receiveApply, String codeNm)

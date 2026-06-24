@@ -59,8 +59,7 @@ public class ApplyService {
         if(ssn1 != null && !ssn1.equals(""))
             ssn = ssn1 + "-" + ssn2;
         log.info(" >> ssn - "+ssn);
-        List<ReceiveApply> receiveApplyList = receiveApplyRepository.findAllByRcvD1AndRcvD2AndApplClasAndSsnOrderByRcvD(rcvD1, rcvD2, applClas, ssn);
-        log.info("size = "+receiveApplyList.size());
+        List<ReceiveApply> receiveApplyList = receiveApplyRepository.findAllByRcvD1AndRcvD2AndApplClasAndSsnOrderByRcvDDescAndRcvSeqNoDesc(rcvD1, rcvD2, applClas, ssn);
         List<ReceiveApplyElementDTO> receiveApplyElementDTOList = new ArrayList<>();
         for(ReceiveApply receiveApply: receiveApplyList)
         {
@@ -91,6 +90,7 @@ public class ApplyService {
 
         /* 수정 가능 여부 */
         ReceiveApply receiveApply = receiveApplyRepository.findBySsnAndRcvDAndRcvSeqNo(ssn, String.valueOf(receiveApplyDTO.rcvD()), receiveApplyDTO.rcvSeqNo());
+        log.info(ssn+" "+ String.valueOf(receiveApplyDTO.rcvD())+" "+ receiveApplyDTO.rcvSeqNo());
         // 입회 신청 정보가 없는 경우
         if(receiveApply == null)
             throw BaseException.type(ReceiveApplyErrorCode.RECEIVE_APPLY_NOT_FOUND);
@@ -570,22 +570,26 @@ public class ApplyService {
         return cardRepository.save(card);
     }
 
-    public ReceiveApplyDTO ReceiveApplyDetail(ReceiveApplyDTO receiveApplyDTO)
+    public ReceiveApplyDTO ReceiveApplyDetail(String ssn1, String ssn2, LocalDate rcvD, String rcvSeqNo)
     {
         log.info("{ ApplyService } : ReceiveApplyDetail 조회");
-        String ssn = receiveApplyDTO.ssn1() + "-" +receiveApplyDTO.ssn2();
-        ReceiveApply receiveApply = receiveApplyRepository.findBySsnAndRcvDAndRcvSeqNo(ssn, String.valueOf(receiveApplyDTO.rcvD()), receiveApplyDTO.rcvSeqNo());
+        String ssn = ssn1 + "-" +ssn2;
+        ReceiveApply receiveApply = receiveApplyRepository.findBySsnAndRcvDAndRcvSeqNo(ssn, String.valueOf(rcvD), rcvSeqNo);
         // 입회 신청 정보가 없는 경우
         if(receiveApply == null)
             throw BaseException.type(ReceiveApplyErrorCode.RECEIVE_APPLY_NOT_FOUND);
-        // 이미 카드를 발급받은 경우
-        if(receiveApply.getCrdNo() != null)
-            throw BaseException.type(ReceiveApplyErrorCode.RECEIVE_APPLY_CANNOT_MODIFIED);
+//        // 이미 카드를 발급받은 경우
+//        if(receiveApply.getCrdNo() != null)
+//            throw BaseException.type(ReceiveApplyErrorCode.RECEIVE_APPLY_CANNOT_MODIFIED);
 
-        ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C001", receiveApply.getImpsbCd());
-        String codeNm = comCodeDtl.getCodeNm();
+        String codeNm = "";
+        if(receiveApply.getImpsbCd() != null && !receiveApply.getImpsbCd().isEmpty())
+        {
+            ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C001", receiveApply.getImpsbCd());
+            codeNm = comCodeDtl.getCodeNm();
+        }
 
-        receiveApplyDTO = ReceiveApplyDTO.fromReceiveApply(receiveApply, codeNm);
+        ReceiveApplyDTO receiveApplyDTO = ReceiveApplyDTO.fromReceiveApply(receiveApply, codeNm);
         log.info("{ ApplyService } : ReceiveApplyDetail 조회 완료");
         return receiveApplyDTO;
     }

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Controller
@@ -27,7 +28,7 @@ public class ApplyController {
             Model model
     )
     {
-        model.addAttribute("receiveApplyDTO", ReceiveApplyDTO.EmptyReceiveApplyInfo("", ""));  // 입회 신청 request (접수일자)
+        model.addAttribute("receiveApplyDTO", ReceiveApplyDTO.EmptyReceiveApplyInfo("", "", LocalDate.now(), ""));  // 입회 신청 request (접수일자)
         ComCodeSelect(model);
         return "apply/register";
     }
@@ -45,25 +46,36 @@ public class ApplyController {
         return "apply/register";
     }
 
-    @PostMapping("/detail")
+    @GetMapping("/detail")
     public String ReceiveApplyDetail(
-            @ModelAttribute ReceiveApplyDTO receiveApplyDTO,
+//            @ModelAttribute ReceiveApplyDTO receiveApplyDTO,
+            @RequestParam(required = false) Optional<String> ssn1,
+            @RequestParam(required = false) Optional<String> ssn2,
+            @RequestParam(required = false) Optional<String> rcvD,
+            @RequestParam(required = false) Optional<String> rcvSeqNo,
             Model model
     )
     {
         log.info("{ ApplyController } : ReceiveApplyDetail 조회 진입");
         ComCodeSelect(model);
-        try {
-            model.addAttribute("receiveApplyDTO", applyService.ReceiveApplyDetail(receiveApplyDTO));
-            model.addAttribute("message", "조회 성공");
-            log.info("{ ApplyController } : ReceiveApplyDetail 조회 완료");
-            return "apply/register";
-        } catch (Exception e){
-            model.addAttribute("receiveApplyDTO", ReceiveApplyDTO.EmptyReceiveApplyInfo(receiveApplyDTO.ssn1(), receiveApplyDTO.ssn2()));
-            model.addAttribute("message", e.getMessage());
-            log.info("{ ApplyController } : ReceiveApplyDetail 조회 실패");
-            return "apply/register";
+        if(!ssn1.isPresent() && !ssn2.isPresent() && !rcvD.isPresent() && !rcvSeqNo.isPresent())
+        {
+            model.addAttribute("receiveApplyDTO", ReceiveApplyDTO
+                    .EmptyReceiveApplyInfo("", "", null, ""));
         }
+        else
+        {
+            try {
+                model.addAttribute("receiveApplyDTO", applyService.ReceiveApplyDetail(ssn1.get(), ssn2.get(), LocalDate.parse(rcvD.get()), rcvSeqNo.get()));
+                model.addAttribute("message", "조회 성공");
+                log.info("{ ApplyController } : ReceiveApplyDetail 조회 완료");
+            } catch (Exception e){
+                model.addAttribute("receiveApplyDTO", ReceiveApplyDTO.EmptyReceiveApplyInfo(ssn1.get(), ssn2.get(), LocalDate.parse(rcvD.get()), rcvSeqNo.get()));
+                model.addAttribute("message", e.getMessage());
+                log.info("{ ApplyController } : ReceiveApplyDetail 조회 실패");
+            }
+        }
+        return "apply/detail";
     }
 
     @PostMapping("/update")
@@ -76,7 +88,7 @@ public class ApplyController {
         model.addAttribute("receiveApplyDTO", applyService.ReceiveApplyModify(receiveApplyDTO));
         ComCodeSelect(model);
         log.info("{ ApplyController } : ReceiveApplyModify 수정 완료");
-        return "apply/register";
+        return "apply/detail";
     }
 
     public void ComCodeSelect(Model model) {

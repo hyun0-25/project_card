@@ -1,12 +1,18 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<div th:fragment="globalNavbar">
-    <a th:href="@{/apply/register}">회원 입회 신청</a>
-    <a th:href="@{/apply/list}">기간별 입회신청 내역조회</a>
-    <a th:href="@{/card/list}">소지 카드 내역조회</a>
-    <a th:href="@{/card/detail}">카드 상세 내역조회</a>
-    <!-- <a th:href="@{/}">기간별 입회신청 내역조회</a>
-    <a th:href="@{/}">소지 카드 내역조회</a>
-    <a th:href="@{/}">카드 상세 내역조회</a> -->
-</div>
+<head>
+    <meta charset="UTF-8">
+    <style>
+    </style>
+</head>
+<body>
+    <div th:fragment="globalNavbar" class="navbar">
+        <a th:href="@{/apply/register}" style="margin: 10px">회원 입회 신청</a>
+        <a th:href="@{/apply/detail}" style="margin: 10px">회원 입회 신청 상세 내역조회</a>
+        <a th:href="@{/apply/list}" style="margin: 10px">기간별 입회신청 내역조회</a>
+        <a th:href="@{/card/list}" style="margin: 10px">소지 카드 내역조회</a>
+        <a th:href="@{/card/detail}" style="margin: 10px">카드 상세 내역조회</a>
+        <a th:href="@{/user/detail}" style="margin: 10px">회원 색인 조회</a>
+    </div>
+</body>
 </html>
