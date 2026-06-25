@@ -369,17 +369,21 @@
         const messageSpan = document.getElementById('birthDMatchMessage');
 
         if (birthD) {
-            if (validateBirthD(birthD)) {
-                messageSpan.textContent = '유효한 생년월일입니다.';
-                messageSpan.style.cssText = 'color: green; font-size: 0.7em; margin-left: 5px;';
-                birthDVerify = true;
-
-            } else {
+            if(!validateBirthD(birthD)){
                 messageSpan.textContent = '생년월일은 8자입니다. ex) 19991018'
                 messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
                 birthDVerify = false;
             }
-
+            else if(!checkBirthDAndSsn(birthD)){
+                messageSpan.textContent = '주민번호와 일치하는 값을 입력하세요.'
+                messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
+                birthDVerify = false;
+            }
+            else if (validateBirthD(birthD) && checkBirthDAndSsn(birthD)) {
+                messageSpan.textContent = '유효한 생년월일입니다.';
+                messageSpan.style.cssText = 'color: green; font-size: 0.7em; margin-left: 5px;';
+                birthDVerify = true;
+            }
         } else {
             messageSpan.textContent = '';
             birthDVerify = false;
@@ -390,22 +394,39 @@
         const messageSpan = document.getElementById('birthDMatchMessage');
 
         if (birthD) {
-            if (validateBirthD(birthD)) {
-                messageSpan.textContent = '유효한 생년월일입니다.';
-                messageSpan.style.cssText = 'color: green; font-size: 0.7em; margin-left: 5px;';
-                birthDVerify = true;
-
-            } else {
+            if(!validateBirthD(birthD)){
                 messageSpan.textContent = '생년월일은 8자입니다. ex) 19991018'
                 messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
                 birthDVerify = false;
             }
-
+            else if(!checkBirthDAndSsn(birthD)){
+                messageSpan.textContent = '주민번호와 일치하는 값을 입력하세요.'
+                messageSpan.style.cssText = 'color: red; font-size: 0.7em; margin-left: 5px;';
+                birthDVerify = false;
+            }
+            else if (validateBirthD(birthD) && checkBirthDAndSsn(birthD)) {
+                messageSpan.textContent = '유효한 생년월일입니다.';
+                messageSpan.style.cssText = 'color: green; font-size: 0.7em; margin-left: 5px;';
+                birthDVerify = true;
+            }
         } else {
             messageSpan.textContent = '';
             birthDVerify = false;
         }
     });
+    function checkBirthDAndSsn(birthD){
+        const ssn1 = document.getElementById('ssn1').value;
+        const ssn2 = document.getElementById('ssn2').value;
+        let bY = ssn2[0];
+        let birth = (bY === '1' || bY === '2') ? '19' + ssn1 : '20' + ssn1;
+
+        if(birthD === birth){
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
 
     function validateBirthD(birthD) {
         const regex = /^(19|20)\d{6}$/;
@@ -693,6 +714,7 @@
     function validateSsn() {
         let ssn1 = document.getElementById('ssn1');
         let ssn2 = document.getElementById('ssn2');
+
         const checkDigit = [2,3,4,5,6,7,8,9,2,3,4,5];
 
         let ssn1V = ssn1.value;
@@ -710,6 +732,20 @@
         sum = 11 - sum; // 나머지를 11에서 뺌
 
         if(ssn2V[6] == sum){
+
+            // 미성년자 체크
+            let bY = ssn2V[0];
+            let year = ssn1V.substring(0,2);
+            let birthYear = (bY === '1' || bY === '2') ? '19' + year : '20' + year;
+            const clientDate = new Date();
+            const clientYear = clientDate.getFullYear();
+            const age = clientYear - birthYear;
+            if(age < 19)
+            {
+                alert("미성년자는 입회 신청이 불가능합니다.");
+                return false;
+            }
+
             ssn1.readonly = true;
             ssn2.readonly = true;
             return true;
@@ -854,7 +890,11 @@
 
         const impsbCd = document.getElementById('impsbCd').value;
 
-        if(!validateSsn()
+        if(!impsbCd || impsbCd === "") {
+            alert("불능인 신청서만 수정 가능합니다.");
+            return false;
+        }
+        else if(!validateSsn()
             || !validateApplD() || !validateApplClas() || !validateBrd()
             || !validateHgNm() || !validateEngNm() || !validateBirth()
             || !validateStlDd() || !validateStlMtd() || !validateBnkCd()

@@ -481,7 +481,7 @@ public class ApplyService {
                 lstBrdCard.updateLstCrdF();
 
                 // 신규카드 insert
-                Card card = CreateCard(receiveApplyDTO, codeNm, custNo, ssn, lstBrdCard.getBfCrdNo());
+                Card card = CreateCard(receiveApplyDTO, codeNm, custNo, ssn, lstBrdCard.getCrdNo());
                 cN = card.getCrdNo().substring(6, 15);
 
                 // 신청 update
@@ -544,12 +544,14 @@ public class ApplyService {
 
     public Card CreateCard(ReceiveApplyDTO receiveApplyDTO, String codeNm, String custNo, String ssn, String bfCrdNo)
     {
-
+        log.info(" >> bfCrdNo - "+bfCrdNo);
         /* 카드번호 발번 */
         String cN = GenerateCrdNo(); // 일련번호 9자리
         String crdGrd = "11"; // 등급 2자리
 
         String brdNo = Brand.valueOf(codeNm).getNumber(); // 브랜드 4자리
+        log.info(" >> cN - "+cN);
+        log.info(" >> brdNo - "+brdNo);
         String crdNo = checkCrdNo(brdNo + crdGrd + cN);
 
         Card card = Card.createCard(
@@ -598,6 +600,7 @@ public class ApplyService {
 
     public String checkCrdNo(String number)
     {
+        log.info(" >> 카드번호 - "+number);
         int[] checkDigit = {2,3,4,5,6,7,8,9,2,3,4,5,6,7,8};
         char[] crd = number.toCharArray();
         int sum = 0;

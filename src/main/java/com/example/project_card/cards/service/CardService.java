@@ -6,6 +6,8 @@ import com.example.project_card.cards.dto.response.CardElementDTO;
 import com.example.project_card.cards.dto.response.CardListDTO;
 import com.example.project_card.cards.exception.CardErrorCode;
 import com.example.project_card.cards.repository.CardRepository;
+import com.example.project_card.comCodes.domain.ComCodeDtl;
+import com.example.project_card.comCodes.repository.ComCodeDtlRepository;
 import com.example.project_card.global.exception.BaseException;
 import com.example.project_card.users.domain.Bill;
 import com.example.project_card.users.domain.Customer;
@@ -30,6 +32,7 @@ public class CardService {
     private final CardRepository cardRepository;
     private final CustomerRepository customerRepository;
     private final BillRepository billRepository;
+    private final ComCodeDtlRepository comCodeDtlRepository;
 
     public CardListDTO SelectCardList(String ssn1, String ssn2, String crdNo)
     {
@@ -42,6 +45,22 @@ public class CardService {
         Bill bill = billRepository.findByCustNo(customer.getCustNo());
         if(bill == null)
             throw BaseException.type(BillErrorCode.BILL_NOT_FOUND);
+        // 결제방법
+        ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C002", bill.getStlMtd());
+        String stlMtd = comCodeDtl.getCodeNm();
+        // 결제일자
+        comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C009", bill.getStlDd());
+        String stlDd = comCodeDtl.getCodeNm();
+        // 결제은행
+        String bnkCd = "";
+        if(bill.getBnkCd() != null && !bill.getBnkCd().equals(""))
+        {
+            comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C003", bill.getBnkCd());
+            bnkCd = comCodeDtl.getCodeNm();
+        }
+        // 청구서 발송방법
+        comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C006", bill.getStmtSndMtd());
+        String stmtSndMtd = comCodeDtl.getCodeNm();
 
         List<CardElementDTO> cardElementDTOList = new ArrayList<>();
         List<Card> cardList = cardRepository.findAllBySsnAndCrdNo(ssn, crdNo);
@@ -50,9 +69,15 @@ public class CardService {
 
         for(Card card: cardList)
         {
-            cardElementDTOList.add(CardElementDTO.fromCardElement(card));
+            // 브랜드
+            comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C004", card.getBrd());
+            String brd = comCodeDtl.getCodeNm();
+            // 등급
+            comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C005", card.getCrdGrd());
+            String crdGrd = comCodeDtl.getCodeNm();
+            cardElementDTOList.add(CardElementDTO.fromCardElement(card, brd, crdGrd));
         }
-        CardListDTO cardListDTO = CardListDTO.fromCardList(ssn1, ssn2, crdNo, customer, bill, cardElementDTOList);
+        CardListDTO cardListDTO = CardListDTO.fromCardList(ssn1, ssn2, crdNo, customer, bill, stlMtd, stlDd, bnkCd, stmtSndMtd, cardElementDTOList);
         log.info("{ CardService } : SelectCardList 조회 완료");
         return cardListDTO;
     }
@@ -60,9 +85,6 @@ public class CardService {
     public CardDetailDTO SelectCardDetail(String ssn1, String ssn2, String crdNo)
     {
         log.info("{ CardService } : SelectCardDetail 조회");
-        log.info(" >> ssn1 - "+ssn1);
-        log.info(" >> ssn2 - "+ssn2);
-        log.info(" >> crdNo - "+crdNo);
         String ssn = ssn1 + "-" + ssn2;
         Customer customer = customerRepository.findBySsn(ssn);
         if(customer == null)
@@ -71,8 +93,14 @@ public class CardService {
         Card card = cardRepository.findByCrdNoAndCustNo(crdNo, customer.getCustNo());
         if(card == null)
             throw BaseException.type(CardErrorCode.CARD_NOT_FOUND);
+        // 브랜드
+        ComCodeDtl comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C004", card.getBrd());
+        String brd = comCodeDtl.getCodeNm();
+        // 등급
+        comCodeDtl = comCodeDtlRepository.findByGroupCdAndCode("C005", card.getCrdGrd());
+        String crdGrd = comCodeDtl.getCodeNm();
 
-        CardDetailDTO cardDetailDTO = CardDetailDTO.fromCardDetail(ssn1, ssn2, crdNo, customer, card);
+        CardDetailDTO cardDetailDTO = CardDetailDTO.fromCardDetail(ssn1, ssn2, crdNo, customer, card, brd, crdGrd);
         log.info("{ CardService } : SelectCardDetail 조회");
         return cardDetailDTO;
     }

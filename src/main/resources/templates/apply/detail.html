@@ -273,8 +273,8 @@
 </body>
 <script>
     /* 신청일 최대 = 접수일 */
-    document.getElementById('applD').max = document.getElementById('rcvD').value;
-    document.getElementById('rcvD').max = document.getElementById('rcvD').value;
+    document.getElementById('applD').max = findToday();
+    document.getElementById('rcvD').max = findToday();
 
     /* 우편번호 불러오기 */
     function PostCode() {

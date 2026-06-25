@@ -15,17 +15,17 @@ public record CardElementDTO(
         String lstCrdF,
         String mgtBbrn
 ) {
-    public static CardElementDTO fromCardElement(Card card)
+    public static CardElementDTO fromCardElement(Card card, String brd, String crdGrd)
     {
         return CardElementDTO.builder()
                 .crdNo(card.getCrdNo())
                 .engNm(card.getEngNm())
                 .vldDur(card.getVldDur())
-                .brd(card.getBrd())
-                .crdGrd(card.getCrdGrd())
+                .brd(brd)
+                .crdGrd(crdGrd)
                 .regD(card.getRegD())
                 .bfCrdNo(card.getBfCrdNo())
-                .lstCrdF(card.getLstCrdF())
+                .lstCrdF(card.getLstCrdF() != null && card.getLstCrdF().equals("1") ? "YES" : "NO")
                 .mgtBbrn(card.getMgtBbrn())
                 .build();
     }

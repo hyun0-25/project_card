@@ -57,20 +57,20 @@
 <body>
     <h2>회원 색인 조회</h2>
     <div class="modal">
-        <form id="detailForm" th:action="@{/user/detail}" method="get">
+        <form id="detailForm" th:action="@{/user/list}" method="get">
             <div class="list">
                 <div class="container">
                     <div class="form-group">
                         <label>성명</label>
                         <input type="text" id="hgNm" name="hgNm"
-                               th:value="${userDetailDTO.hgNm}"
+                               th:value="${userListDTO.hgNm}"
                            oninput="this.value = this.value.replace(/[^가-힣ㄱ-ㅎㅏ-ㅣ\s]/g, '');"
                         >
                     </div>
                     <div class="form-group">
                         <label>생년월일</label>
                         <input type="text" id="birthD" name="birthD"
-                               th:value="${userDetailDTO.birthD}"
+                               th:value="${userListDTO.birthD}"
                                maxlength="8" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                         >
                         <div>
@@ -80,7 +80,7 @@
                     <div class="form-group">
                         <label>핸드폰 번호</label>
                         <input type="text" id="hdpNo" name="hdpNo" maxlength="13"
-                               th:value="${userDetailDTO.hdpNo}"
+                               th:value="${userListDTO.hdpNo}"
                             oninput="this.value = this.value.replace(/[^0-9-]/g, '')"
                         >
                         <div>
@@ -118,7 +118,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                    <tr th:each="userDetailDTO, stat : ${userListDTO.userDetailDTOList}">
                         <td th:text="${userDetailDTO.ssn}"></td>
                         <td th:text="${userDetailDTO.hgNm}"></td>
                         <td th:text="${userDetailDTO.birthD}"></td>

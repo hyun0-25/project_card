@@ -1,7 +1,6 @@
 package com.example.project_card.users.controller;
 
-import com.example.project_card.cards.dto.response.CardDetailDTO;
-import com.example.project_card.users.dto.response.UserDetailDTO;
+import com.example.project_card.users.dto.response.UserListDTO;
 import com.example.project_card.users.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,30 +20,30 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/detail")
-    public String SelectUserDetail(
+    @GetMapping("/list")
+    public String SelectUserList(
             @RequestParam(required = false) Optional<String> hgNm,
             @RequestParam(required = false) Optional<String> birthD,
             @RequestParam(required = false) Optional<String> hdpNo,
             Model model
     )
     {
-        log.info("{ UserController } : SelectUserDetail 상세조회");
+        log.info("{ UserController } : SelectUserList 상세조회");
         if(!hgNm.isPresent() && !birthD.isPresent() && !hdpNo.isPresent()){
-            model.addAttribute("userDetailDTO", UserDetailDTO.EmptyUserDetailDTO("", "", ""));
+            model.addAttribute("userListDTO", UserListDTO.EmptyUserListDTO("", "", ""));
         }
         else
         {
             try{
-                model.addAttribute("userDetailDTO", userService.SelectUserDetail(hgNm.get(), birthD.get(), hdpNo.get()));
+                model.addAttribute("userListDTO", userService.SelectUserList(hgNm.get(), birthD.get(), hdpNo.get()));
                 model.addAttribute("message", "조회 성공!");
-                log.info("{ UserController } : SelectUserDetail 상세조회 완료");
+                log.info("{ UserController } : SelectUserList 조회 완료");
             } catch (Exception e){
-                model.addAttribute("userDetailDTO", UserDetailDTO.EmptyUserDetailDTO(hgNm.get(), birthD.get(), hdpNo.get()));
+                model.addAttribute("userListDTO", UserListDTO.EmptyUserListDTO(hgNm.get(), birthD.get(), hdpNo.get()));
                 model.addAttribute("message", e.getMessage());
-                log.info("{ UserController } : SelectUserDetail 상세조회 실패");
+                log.info("{ UserController } : SelectUserList 조회 실패");
             }
         }
-        return "user/detail";
+        return "user/list";
     }
 }

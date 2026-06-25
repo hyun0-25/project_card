@@ -25,7 +25,7 @@ public record CardDetailDTO(
     {
         return new CardDetailDTO(ssn1, ssn2, crdNo, "", "", "", "", "", "", "", "", "", "", "");
     }
-    public static CardDetailDTO fromCardDetail(String ssn1, String ssn2, String crdNo, Customer customer, Card card)
+    public static CardDetailDTO fromCardDetail(String ssn1, String ssn2, String crdNo, Customer customer, Card card, String brd, String crdGrd)
     {
         return CardDetailDTO.builder()
                 .ssn1(ssn1)
@@ -35,12 +35,12 @@ public record CardDetailDTO(
                 .engNm(card.getEngNm())
                 .regD(card.getRegD())
                 .vldDur(card.getVldDur())
-                .brd(card.getBrd())
-                .crdGrd(card.getCrdGrd())
+                .brd(brd)
+                .crdGrd(crdGrd)
                 .bfCrdNo(card.getBfCrdNo())
                 .custNo(card.getCustNo())
                 .mgtBbrn(card.getMgtBbrn())
-                .lstCrdF(card.getLstCrdF())
+                .lstCrdF(card.getLstCrdF() != null && card.getLstCrdF().equals("1") ? "YES" : "NO")
                 .fstRegD(card.getFstRegD())
                 .build();
     }

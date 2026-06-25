@@ -14,12 +14,6 @@ public record UserDetailDTO(
         String stlAct,
         String billAdr
 ) {
-
-    public static UserDetailDTO EmptyUserDetailDTO(String hgNm, String birthD, String hdpNo)
-    {
-        return new UserDetailDTO("", hgNm, birthD, hdpNo, "", "", "");
-    }
-
     public static UserDetailDTO fromUserDetail(Customer customer, Bill bill)
     {
         return UserDetailDTO.builder()

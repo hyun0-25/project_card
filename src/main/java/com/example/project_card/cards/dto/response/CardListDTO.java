@@ -31,7 +31,7 @@ public record CardListDTO(
         return new CardListDTO(ssn1, ssn2, crdNo, "", "", "", "", "", "", "", "", "", "", "", "", "", null);
     }
 
-    public static CardListDTO fromCardList(String ssn1, String ssn2, String crdNo, Customer customer, Bill bill, List<CardElementDTO> cardElementDTOList)
+    public static CardListDTO fromCardList(String ssn1, String ssn2, String crdNo, Customer customer, Bill bill, String stlMtd, String stlDd, String bnkCd, String stmtSndMtd, List<CardElementDTO> cardElementDTOList)
     {
         return CardListDTO.builder()
                 .ssn1(ssn1)
@@ -41,11 +41,11 @@ public record CardListDTO(
                 .hgNm(customer.getHgNm())
                 .hdpNo(customer.getHdpNo())
                 .regD(customer.getRegD())
-                .stlMtd(bill.getStlMtd())
-                .bnkCd(bill.getBnkCd())
+                .stlMtd(stlMtd)
+                .bnkCd(bnkCd)
                 .stlAct(bill.getStlAct())
-                .stlDd(bill.getStlDd())
-                .stmtSndMtd(bill.getStmtSndMtd())
+                .stlDd(stlDd)
+                .stmtSndMtd(stmtSndMtd)
                 .emailAdr(bill.getEmailAdr())
                 .billZip(bill.getBillZip())
                 .billAdr1(bill.getBillAdr1())
